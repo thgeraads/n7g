@@ -6,14 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
 
-        *{
+        /* open-sans-regular - latin */
+        @font-face {
+            font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+            font-family: 'Open Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: url('./fonts/open-sans-v43-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+        }
+
+        @font-face {
+            font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+            font-family: 'Open Sans';
+            font-style: normal;
+            font-weight: 500;
+            src: url('./fonts/open-sans-v43-latin-500.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+        }
+
+        * {
             user-select: none;
 
         }
+
+
         html, body {
             margin: 0;
             padding: 0;
-            background: #eee;
+            background: radial-gradient(#d2d4e4, #d5d6e6);
             font-family: sans-serif;
             display: flex;
             flex-direction: column;
@@ -36,6 +55,8 @@
             border: 2px solid #000;
             background-size: cover;
             background-position: center;
+            background-color: white;
+
         }
 
         .status-bar {
@@ -96,7 +117,7 @@
             width: 8px;
             height: 8px;
             margin: 0 3px;
-            background-color: rgba(255,255,255,0.4);
+            background-color: rgba(255, 255, 255, 0.4);
             border-radius: 50%;
         }
 
@@ -124,11 +145,11 @@
             border-radius: 50%;
             cursor: pointer;
             border: 2px solid white;
-            box-shadow: 0 0 4px rgba(0,0,0,0.3);
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
         }
 
         .wallpaperScreen {
-            background: rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.2);
             padding: 10px;
             border-radius: 10px;
         }
@@ -144,11 +165,217 @@
         .wallpaperScreenWallpapers img.active {
             border-color: white;
         }
+
+        .navbar {
+            height: 96px;
+            width: 100svw;
+            background-color: #8f909b80;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar > p {
+            color: #3a3c45;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            font-size: 28px;
+            padding: 28px;
+        }
+
+
+        @keyframes mde3-btn-hover {
+            0% {
+                width: 200px;
+            }
+
+            50% {
+                width: 220px;
+            }
+
+            100% {
+                width: 200px;
+            }
+
+        }
+
+        .md3e-btn {
+            height: 60px;
+            /*width: 200px;*/
+            padding: 0 20px;
+            /*padding: 20px 30px;*/
+            background-color: #8f909b80;
+            color: #3a3c45;
+            border-radius: 30px;
+            display: flex;
+            /*gap: 8px;*/
+            align-items: center;
+            justify-content: center;
+            /*justify-content: center;*/
+            transition: all 0.3s ease;
+            font-size: 18px;
+            font-family: 'Open Sans', sans-serif;
+
+        }
+
+
+        .md3e-btn:hover {
+            background-color: #4f5d8c;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            /*animation-name: mde3-btn-hover;*/
+            animation-duration: 0.2s;
+            animation-timing-function: ease-in-out;
+            /*transition: background-color 0.3s ease, color 0.3s ease;*/
+        }
+
+        .md3e-btn:hover .button-content > svg {
+            fill: white;
+            stroke: white;
+        }
+
+        .button-content > svg {
+            transition: all 0.3s ease;
+
+        }
+
+        .button-content {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 6px;
+            align-items: center;
+            margin-right: 3px;
+        }
+
+        .err {
+            background-color: #ec696080;
+        }
+
+        .err:hover {
+            background-color: #ac403a;
+            color: #FFFFFF;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-right: 20px;
+        }
+
+        .color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .slate{
+            background-color: #4f5864;
+        }
+
+        .silver{
+            background-color: #ecf0ef;
+        }
+
+        .blue{
+            background-color: #45bdd8;
+        }
+
+        .green{
+            background-color: #70c093;
+        }
+
+        .yellow{
+            background-color: #d7dc48;
+        }
+
+        .pink{
+            background-color: #f47578;
+        }
+
+        .purple{
+            background-color: #cf91cc;
+        }
+
+        .red{
+            background-color: #f33a3d;
+        }
+
+        .color-preview.blank{
+            height: 0; !important;
+            width: 0; !important;
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dropdown-item > div >  span{
+            align-items: center;
+            margin-left: 30px
+        }
+
     </style>
+    <link rel="stylesheet" href="dropdown.css">
 </head>
 <body>
+<div class="navbar">
+    <p>iPod Nano 7 Theme Previewer</p>
+    <div class="button-group">
+        <a class="md3e-btn err">
+            <div class="button-content">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                     fill="#1f1f1f">
+                    <path d="M480-200q66 0 113-47t47-113v-160q0-66-47-113t-113-47q-66 0-113 47t-47 113v160q0 66 47 113t113 47Zm-80-120h160v-80H400v80Zm0-160h160v-80H400v80Zm80 40Zm0 320q-65 0-120.5-32T272-240H160v-80h84q-3-20-3.5-40t-.5-40h-80v-80h80q0-20 .5-40t3.5-40h-84v-80h112q14-23 31.5-43t40.5-35l-64-66 56-56 86 86q28-9 57-9t57 9l88-86 56 56-66 66q23 15 41.5 34.5T688-640h112v80h-84q3 20 3.5 40t.5 40h80v80h-80q0 20-.5 40t-3.5 40h84v80H688q-32 56-87.5 88T480-120Z"/>
+                </svg>
+                <span>Report an issue</span>
+            </div>
+        </a>
+
+        <a class="md3e-btn">
+            <div class="button-content">
+
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z"/></svg>
+                <span>Request a feature?</span>
+            </div>
+        </a>
+    </div>
+</div>
+
+
+<div class="dropdown" id="firmware-dropdown">
+    <div class="dropdown-toggle" tabindex="0" id="firmwareDropdownToggle">Select a firmware</div>
+    <div class="dropdown-menu" id="firmwareDropdownMenu">
+        <div class="dropdown-item">Stock</div>
+        <div class="dropdown-item">Option 2</div>
+        <div class="dropdown-item">Option 3</div>
+    </div>
+</div>
+
+<div class="dropdown" id="color-dropdown">
+    <div class="dropdown-toggle" tabindex="0" id="colorDropdownToggle"><div class="color-preview blank"></div>Select a device color</div>
+    <div class="dropdown-menu" id="colorDropdownMenu">
+        <div class="dropdown-item"><div class="color-preview slate"></div><span>Slate</span></div>
+        <div class="dropdown-item"><div class="color-preview silver"></div><span>Silver</span></div>
+        <div class="dropdown-item"><div class="color-preview blue"></div><span>Blue</span></div>
+        <div class="dropdown-item"><div class="color-preview green"></div><span>Green</span></div>
+        <div class="dropdown-item"><div class="color-preview yellow"></div><span>Yellow</span></div>
+        <div class="dropdown-item"><div class="color-preview pink"></div><span>Pink</span></div>
+        <div class="dropdown-item"><div class="color-preview purple"></div><span>Purple</span></div>
+        <div class="dropdown-item"><div class="color-preview red"></div><span>Red</span></div>
+
+    </div>
+</div>
+
 
 <h2>Upload .IPSW</h2>
+
 <input type="file" id="fileInput" accept=".ipsw">
 
 <div class="ipod-wrapper" id="ipod">
@@ -174,8 +401,8 @@
 
 <!-- Main script -->
 <script type="module">
-    import { extractFilteredImages } from './js/unpack.js';
-    import { json } from './js/json.js';
+    import {extractFilteredImages} from './js/unpack.js';
+    import {json} from './js/json.js';
 
     const fileInput = document.getElementById('fileInput');
     const pagesWrapper = document.getElementById('pagesWrapper');
@@ -405,6 +632,51 @@
         });
     });
 
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropdowns = document.querySelectorAll('.dropdown');
+
+        dropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector('.dropdown-toggle');
+            const menu = dropdown.querySelector('.dropdown-menu');
+            const items = menu.querySelectorAll('.dropdown-item');
+
+            // Toggle open/close
+            toggle.addEventListener('click', () => {
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) d.classList.remove('open'); // close others
+                });
+                dropdown.classList.toggle('open');
+            });
+
+            // Item click handler
+            items.forEach(item => {
+                item.addEventListener('click', () => {
+                    toggle.textContent = item.textContent;
+                    items.forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    dropdown.classList.remove('open');
+                });
+            });
+
+            // Keyboard accessibility
+            toggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    dropdown.classList.toggle('open');
+                }
+            });
+        });
+
+        // Close on outside click
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                dropdowns.forEach(d => d.classList.remove('open'));
+            }
+        });
+    });
 </script>
 
 
