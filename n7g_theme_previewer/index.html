@@ -1,556 +1,412 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <title>iPod UI Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
 
         *{
             user-select: none;
+
         }
-        body {
+        html, body {
             margin: 0;
             padding: 0;
-            font-family: 'San Francisco', sans-serif; /* Consistent font */
-            background: #f0f0f0; /* Light background for contrast */
-        }
-
-        #app {
-            height: 100svh;
-            width: 100svw;
+            background: #eee;
+            font-family: sans-serif;
             display: flex;
-            justify-content: center;
-            align-items: center;
             flex-direction: column;
+            align-items: center;
         }
 
-        .ipod-container {
-            position: relative;
+        h2 {
+            margin: 16px 0 8px;
+        }
+
+        input {
+            margin-bottom: 12px;
+        }
+
+        .ipod-wrapper {
             width: 240px;
-            height: 480px; /* Adjusted height to make space for dots */
-        }
-
-        .ipod {
             height: 432px;
-            width: 240px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #000;
             background-size: cover;
-            cursor: grab;
+            background-position: center;
         }
 
-        .statusBar {
+        .status-bar {
+            height: 27px;
+            /*background-image: url("assets/statusbar_wallpaper.jpg");*/
             display: flex;
-            flex-direction: row;
+            background: rgba(0, 0, 0, 0.5);
             justify-content: center;
             align-items: center;
             color: white;
-            height: 27px;
-        }
-
-        .time {
-            color: white;
-            font-weight: 700;
+            font-weight: bold;
             font-size: 14px;
         }
 
-        /* Container that holds the sliding pages */
-        .appIcons {
-            height: calc(100% - 32px);
-            overflow: hidden; /* Hide the other pages */
-            position: relative;
-        }
-
-        /* Wrapper that slides left and right */
         .pages-wrapper {
+            height: calc(100% - 27px);
             display: flex;
-            height: 100%;
-            transition: transform 0.4s ease-out; /* Smooth snapping animation */
+            transition: transform 0.3s ease;
         }
 
-        /* Each individual page */
-        .app-page {
-            width: 240px; /* Fixed width matching the iPod screen */
-            height: 100%;
+        .page {
+            min-width: 240px;
             display: grid;
             grid-template-columns: 1fr 1fr;
-            flex-shrink: 0; /* Prevent pages from shrinking */
+            /*align-items: center;*/
+            /*justify-items: center;*/
+            padding-top: 10px;
+            box-sizing: border-box;
         }
 
-        .appIcon {
-            display: flex;
-            flex-direction: column;
-            /*justify-content: center;*/
-            align-items: center;
+        .app {
+            text-align: center;
         }
 
-        .appIcon img {
+        .app img {
             width: 112px;
             height: 112px;
+            user-select: none;
         }
 
-        .appIcon p {
-            margin: -8px 0 0 0;
-            padding: 0;
-            text-align: center;
-            font-size: 14px;
-            color: #ffffff;
-            font-weight: 700;
+        .app p {
+            margin-top: -16px;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            user-select: none;
         }
 
-        /* Pagination Dots */
-        .pagination-dots {
+        .pagination {
             position: absolute;
-            bottom: 60px; /* Position dots above the controls */
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 6px;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
         }
 
         .dot {
+            display: inline-block;
             width: 8px;
             height: 8px;
+            margin: 0 3px;
+            background-color: rgba(255,255,255,0.4);
             border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.4);
-            transition: background-color 0.3s;
         }
 
         .dot.active {
             background-color: white;
         }
 
-        /* Controls for changing color */
         .controls {
-            position: absolute;
-            bottom: 20px;
+            margin-top: 16px;
             display: flex;
-            justify-content: center;
-            width: 100%;
+            flex-direction: column;
+            align-items: center;
         }
 
         .colors {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-        }
-
-        .colors.active {
-            background-color: rgba(0, 0, 0, 0.5);
+            gap: 6px;
+            margin-bottom: 10px;
         }
 
         .btn {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            margin: 5px;
-            display: inline-block;
             cursor: pointer;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .btn:hover {
-            transform: scale(1.1);
-        }
-
-        .silver {
-            background-color: #ababa1;
-        }
-
-        .black {
-            background-color: #3b3b3b;
-        }
-
-        .red {
-            background-color: #c70007;
-        }
-
-        .green {
-            background-color: #5bad53;
-        }
-
-        .blue {
-            background-color: #008a96;
-        }
-
-        .purple {
-            background-color: #bf6d93;
-        }
-
-        .pink {
-            background-color: #f76a52;
-        }
-
-        .yellow {
-            background-color: #bfbf00;
+            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(0,0,0,0.3);
         }
 
         .wallpaperScreen {
-            width: 240px;
-            height: 432px;
-            display: flex;
-            flex-direction: column;
-            position: absolute;
-            align-items: center;
-            top: -500px;
-            left: 50px;
-            border: 4px solid black;
+            background: rgba(0,0,0,0.2);
+            padding: 10px;
+            border-radius: 10px;
         }
 
-        .wallpaperStatusBar {
-            background-image: url("assets/statusbar_wallpaper.jpg");
-            width: 240px;
-            height: 27px;
+        .wallpaperScreenWallpapers img {
+            /*width: 110px;*/
+            /*height: 70px*/
+            margin: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
         }
 
-        .wallpaperScreenWallpapers {
-            height: auto;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 2px;
-            margin-top: 5px;
-            justify-content: center;
-            overflow-y: scroll;
-        }
-
-        ::-webkit-scrollbar {
-            display: none;
+        .wallpaperScreenWallpapers img.active {
+            border-color: white;
         }
     </style>
-    <link rel="stylesheet" href="sf.css" type="text/css">
 </head>
 <body>
-<div id="app">
-    <div class="ipod-container">
-        <div class="ipod">
-            <div class="statusBar">
-                <p class="time">9:41 AM</p>
-            </div>
-            <div class="appOverlay">
-                <div class="appIcons">
 
-                </div>
-            </div>
-        </div>
-        <div class="pagination-dots">
-        </div>
-    </div>
-    <div class="controls">
-        <div class="colors">
-            <a onclick="changeColor('Slate')" class="btn black"></a>
-            <a onclick="changeColor('Silver')" class="btn silver"></a>
-            <a onclick="changeColor('Blue')" class="btn blue"></a>
-            <a onclick="changeColor('Green')" class="btn green"></a>
-            <a onclick="changeColor('Yellow')" class="btn yellow"></a>
-            <a onclick="changeColor('Pink')" class="btn pink"></a>
-            <a onclick="changeColor('Purple')" class="btn purple"></a>
-            <a onclick="changeColor('Red')" class="btn red"></a>
-        </div>
-        <div class="wallpaperStyles">
-            <div class="wallpaperScreen">
-                <div class="wallpaperStatusBar"></div>
-                <div class="wallpaperScreenWallpapers">
-                </div>
-            </div>
-        </div>
+<h2>Upload .IPSW</h2>
+<input type="file" id="fileInput" accept=".ipsw">
+
+<div class="ipod-wrapper" id="ipod">
+    <div class="status-bar">9:41 AM</div>
+    <div class="pages-wrapper" id="pagesWrapper"></div>
+    <div class="pagination" id="paginationDots"></div>
+</div>
+
+<!--<button id="showImagesBtn">Show All Filtered Images</button>-->
+<!--<div id="filteredImageDump" style="margin-top: 20px;"></div>-->
+
+
+<div class="controls">
+    <div class="colors" id="colorButtons"></div>
+    <div class="wallpaperScreen">
+        <div class="wallpaperScreenWallpapers" id="wallpaperOptions"></div>
     </div>
 </div>
-</body>
-<script>
-    const json = {
-        "app_icons": [{"id": "229442202_1888", "name": "Music"}, {
-            "id": "229442211_1888",
-            "name": "Video"
-        }, {"id": "229442206_1888", "name": "Nike"}, {
-            "id": "229442203_1888",
-            "name": "Podcasts"
-        }, {"id": "229442204_1888", "name": "Photo"}, {
-            "id": "229442208_1888",
-            "name": "Radio"
-        }, {"id": "229442205_1888", "name": "Settings"}, {
-            "id": "229442209_1888",
-            "name": "Clock"
-        }, {"id": "229442207_1888", "name": "Voice recorder", "notes": "unused"}, {
-            "id": "229442210_1888",
-            "name": "iTunes U",
-            "notes": "unused"
-        }, {"id": "229442201_1888", "name": "Book", "notes": "unused"}],
-        "ui_elements": [{"id": "229442200_0064", "name": "App icon click shadow"}, {
-            "id": "229442213_0064",
-            "name": "Boot apple logo?"
-        }],
-        "wallpapers_by_color": {
-            "Slate": {
-                "solid": {"full_res": "229442215_0064", "preview": "229442228_0064"},
-                "striped": {"full_res": "229442241_0064", "preview": "229442254_0064"},
-                "dotted": {"full_res": "229442267_0064", "preview": "229442280_0064"},
-                "circles": {"full_res": "229442293_0064", "preview": "229442306_0064"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Silver": {
-                "solid": {"full_res": "229442216_0064", "preview": "229442229_0064"},
-                "striped": {"full_res": "229442242_0064", "preview": "229442255_0064"},
-                "dotted": {"full_res": "229442268_0064", "preview": "229442281_0064"},
-                "circles": {"full_res": "229442294_0064", "preview": "229442307_0064"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Blue": {
-                "solid": {"full_res": "229442217_0064", "preview": "229442230_0064"},
-                "striped": {"full_res": "229442243_0064", "preview": "229442256_0064"},
-                "dotted": {"full_res": "229442269_0065", "preview": "229442282_0065"},
-                "circles": {"full_res": "229442295_0065", "preview": "229442308_0065"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Green": {
-                "solid": {"full_res": "229442218_0064", "preview": "229442231_0064"},
-                "striped": {"full_res": "229442244_0064", "preview": "229442257_0064"},
-                "dotted": {"full_res": "229442270_0065", "preview": "229442283_0065"},
-                "circles": {"full_res": "229442296_0065", "preview": "229442309_0065"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Yellow": {
-                "solid": {"full_res": "229442219_0064", "preview": "229442232_0064"},
-                "striped": {"full_res": "229442245_0064", "preview": "229442258_0064"},
-                "dotted": {"full_res": "229442271_0065", "preview": "229442284_0065"},
-                "circles": {"full_res": "229442297_0065", "preview": "229442310_0065"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Pink": {
-                "solid": {"full_res": "229442220_0064", "preview": "229442233_0064"},
-                "striped": {"full_res": "229442246_0065", "preview": "229442259_0064"},
-                "dotted": {"full_res": "229442272_0065", "preview": "229442285_0065"},
-                "circles": {"full_res": "229442298_0065", "preview": "229442311_0065"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Purple": {
-                "solid": {"full_res": "229442221_0064", "preview": "229442234_0064"},
-                "striped": {"full_res": "229442247_0064", "preview": "229442260_0064"},
-                "dotted": {"full_res": "229442273_0065", "preview": "229442286_0065"},
-                "circles": {"full_res": "229442299_0065", "preview": "229442260_0064"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Red": {
-                "solid": {"full_res": "229442222_0064", "preview": "229442235_0064"},
-                "striped": {"full_res": "229442248_0064", "preview": "229442261_0064"},
-                "dotted": {"full_res": "229442274_0065", "preview": "229442287_0065"},
-                "circles": {"full_res": "229442300_0065", "preview": "229442313_0065"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Space Gray": {
-                "solid": {"full_res": "229442223_0064", "preview": "229442236_0064"},
-                "striped": {"full_res": "229442249_0064", "preview": "229442262_0064"},
-                "dotted": {"full_res": "229442275_0064", "preview": "229442288_0064"},
-                "circles": {"full_res": "229442301_0064", "preview": "229442314_0064"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Gold": {
-                "solid": {"full_res": "229442224_0064", "preview": "229442237_0064"},
-                "striped": {"full_res": "229442250_0064", "preview": "229442263_0064"},
-                "dotted": {"full_res": "229442276_0064", "preview": "229442289_0064"},
-                "circles": {"full_res": "229442302_0064", "preview": "229442315_0064"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Pink (2015)": {
-                "solid": {"full_res": "229442225_0064", "preview": "229442238_0064"},
-                "striped": {"full_res": "229442251_0064", "preview": "229442264_0064"},
-                "dotted": {"full_res": "229442277_0064", "preview": "229442290_0064"},
-                "circles": {"full_res": "229442303_0064", "preview": "229442316_0064"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
-            },
-            "Blue (2015)": {
-                "solid": {"full_res": "229442226_0064", "preview": "229442239_0064"},
-                "striped": {"full_res": "229442252_0064", "preview": "229442265_0064"},
-                "dotted": {"full_res": "229442278_0064", "preview": "229442291_0064"},
-                "circles": {"full_res": "229442304_0064", "preview": "229442317_0064"},
-                "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
+
+<!-- Include FFLATE support -->
+<script src="https://unpkg.com/fflate@0.8.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+
+<!-- Main script -->
+<script type="module">
+    import { extractFilteredImages } from './js/unpack.js';
+    import { json } from './js/json.js';
+
+    const fileInput = document.getElementById('fileInput');
+    const pagesWrapper = document.getElementById('pagesWrapper');
+    const paginationDots = document.getElementById('paginationDots');
+    const ipod = document.getElementById('ipod');
+    const colorButtons = document.getElementById('colorButtons');
+    const wallpaperOptions = document.getElementById('wallpaperOptions');
+
+    let imageMap = new Map();
+    let selectedColor = 'Green';
+    let selectedStyle = 'solid';
+    let currentPage = 0;
+    let pagesCount = 0;
+    let isDragging = false;
+    let startX = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const buffer = await file.arrayBuffer();
+        const images = await extractFilteredImages(buffer, json);
+        lastFilteredImages = images;
+
+
+        imageMap.clear();
+        for (const img of images) {
+            const idPrefix = img.id.toString(); // Just the numeric ID
+            const url = img.dataURL;
+            if (!imageMap.has(idPrefix)) {
+                imageMap.set(idPrefix, []);
             }
-        }
-    }
-
-    var wallpaperStyle = 'solid';
-    function sanitizeColorName(name) {
-        if (!name) return '';
-        return name.toLowerCase().replace(/\s+/g, '-').replace(/[()]/g, '');
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const iconsContainer = document.querySelector('.appIcons');
-        const dotsContainer = document.querySelector('.pagination-dots');
-        const ipodElement = document.querySelector('.ipod');
-
-        let pagesWrapper;
-        const iconsPerPage = 6;
-        const availableApps = json.app_icons.filter(app => !(app.notes && app.notes.includes('unused')));
-        const numPages = Math.ceil(availableApps.length / iconsPerPage);
-
-        let currentPage = 0;
-        let isDragging = false;
-        let startX;
-        let currentTranslate = 0;
-        let prevTranslate = 0;
-
-        function setupPages() {
-            iconsContainer.innerHTML = '';
-            dotsContainer.innerHTML = '';
-
-            pagesWrapper = document.createElement('div');
-            pagesWrapper.className = 'pages-wrapper';
-            iconsContainer.appendChild(pagesWrapper);
-
-            for (let i = 0; i < numPages; i++) {
-                const page = document.createElement('div');
-                page.className = 'app-page';
-                pagesWrapper.appendChild(page);
-
-                if (numPages > 1) {
-                    const dot = document.createElement('div');
-                    dot.className = i === 0 ? 'dot active' : 'dot';
-                    dotsContainer.appendChild(dot);
-                }
-            }
-
-            availableApps.forEach((app, index) => {
-                const pageIndex = Math.floor(index / iconsPerPage);
-                const page = pagesWrapper.children[pageIndex];
-
-                const appIconContainer = document.createElement('div');
-                appIconContainer.className = 'appIcon';
-
-                const appIcon = document.createElement('img');
-                appIcon.src = fetchAssetById(app.id);
-                appIcon.alt = app.name;
-                appIcon.ondragstart = () => false;
-
-                const appLabel = document.createElement('p');
-                appLabel.textContent = app.name;
-
-                appIconContainer.appendChild(appIcon);
-                appIconContainer.appendChild(appLabel);
-                page.appendChild(appIconContainer);
-            });
-
-            ipodElement.addEventListener('mousedown', startDrag);
-            ipodElement.addEventListener('touchstart', startDrag, {passive: true});
-            ipodElement.addEventListener('mousemove', drag);
-            ipodElement.addEventListener('touchmove', drag, {passive: true});
-            ipodElement.addEventListener('mouseup', endDrag);
-            ipodElement.addEventListener('touchend', endDrag);
-            ipodElement.addEventListener('mouseleave', endDrag);
+            imageMap.get(idPrefix).push(url);
         }
 
-        function startDrag(event) {
-            if (event.target.closest('.btn')) return;
-            isDragging = true;
-            startX = getPositionX(event);
-            ipodElement.style.cursor = 'grabbing';
-            pagesWrapper.style.transition = 'none';
-        }
-
-        function drag(event) {
-            if (isDragging) {
-                const currentPosition = getPositionX(event);
-                currentTranslate = prevTranslate + currentPosition - startX;
-                setSliderPosition();
-            }
-        }
-
-        function endDrag() {
-            if (!isDragging) return;
-            isDragging = false;
-            ipodElement.style.cursor = 'grab';
-            pagesWrapper.style.transition = 'transform 0.4s ease-out';
-            const movedBy = currentTranslate - prevTranslate;
-            const pageWidth = iconsContainer.clientWidth;
-
-            if (movedBy < -pageWidth / 4 && currentPage < numPages - 1) {
-                currentPage++;
-            }
-            if (movedBy > pageWidth / 4 && currentPage > 0) {
-                currentPage--;
-            }
-            goToPage(currentPage);
-        }
-
-        function goToPage(pageIndex) {
-            const pageWidth = iconsContainer.clientWidth;
-            currentTranslate = pageIndex * -pageWidth;
-            prevTranslate = currentTranslate;
-            setSliderPosition();
-            updateDots();
-        }
-
-        function getPositionX(event) {
-            return event.type.includes('mouse') ? event.pageX : event.touches[0].clientX;
-        }
-
-        function setSliderPosition() {
-            pagesWrapper.style.transform = `translateX(${currentTranslate}px)`;
-        }
-
-        function updateDots() {
-            if (numPages <= 1) return;
-            Array.from(dotsContainer.children).forEach((dot, index) => {
-                dot.classList.toggle('active', index === currentPage);
-            });
-        }
-
-        setupPages();
-        changeColor('Green'); // Initial load
+        buildColorButtons();
+        updateWallpaper();
+        renderWallpaperOptions();
+        renderAppIcons();
     });
 
-    function changeColor(color) {
-        const ipod = document.querySelector('.ipod');
+    function buildColorButtons() {
+        colorButtons.innerHTML = '';
+        const allowedColors = [
+            "Silver", "Blue", "Green", "Yellow", "Pink", "Purple", "Red", "Slate"
+        ];
 
-        const wallpaperData = json.wallpapers_by_color[color];
-        if (!wallpaperData) return;
-
-        const backgroundAsset = (wallpaperData[wallpaperStyle] || wallpaperData['solid']).full_res;
-        ipod.style.backgroundImage = `url(${fetchAssetById(backgroundAsset)})`;
-
-        const allSanitizedColorClasses = Object.keys(json.wallpapers_by_color).map(c => sanitizeColorName(c));
-        ipod.classList.remove(...allSanitizedColorClasses);
-
-        ipod.classList.add(sanitizeColorName(color));
-
-        renderWallpaperPreviews(color);
+        allowedColors.forEach(colorName => {
+            const btn = document.createElement('div');
+            btn.className = 'btn';
+            btn.style.backgroundColor = getApproxColor(colorName);
+            btn.title = colorName;
+            btn.onclick = () => {
+                selectedColor = colorName;
+                selectedStyle = 'solid';
+                updateWallpaper();
+                renderWallpaperOptions();
+            };
+            colorButtons.appendChild(btn);
+        });
     }
 
-    function fetchAssetById(id) {
-        return `assets/ipod/${id}.png`;
-    }
-
-    function renderWallpaperPreviews(color) {
-        const wallpaperScreen = document.querySelector('.wallpaperScreenWallpapers');
-        wallpaperScreen.innerHTML = '';
-        const wallpapers = json.wallpapers_by_color[color];
-        if (!wallpapers) return;
-
-        for (const style in wallpapers) {
-            const wallpaper = wallpapers[style];
-            const previewImage = document.createElement('img');
-            previewImage.src = fetchAssetById(wallpaper.preview);
-            previewImage.alt = `${color} ${style}`;
-            previewImage.style.width = '117px';
-            previewImage.style.height = '200px';
-            previewImage.style.cursor = 'pointer';
-            previewImage.onclick = () => setWallpaperStyle(style);
-            wallpaperScreen.appendChild(previewImage);
+    function updateWallpaper() {
+        const wallId = json.wallpapers_by_color[selectedColor]?.[selectedStyle]?.full_res;
+        if (!wallId) return;
+        const wallpaper = findImageById(wallId);
+        if (wallpaper) {
+            ipod.style.backgroundImage = `url(${wallpaper})`;
         }
     }
 
-    function setWallpaperStyle(style) {
-        const ipod = document.querySelector('.ipod');
-        const colorKeys = Object.keys(json.wallpapers_by_color);
-        let currentColorKey = null;
-
-        for (const key of colorKeys) {
-            if (ipod.classList.contains(sanitizeColorName(key))) {
-                currentColorKey = key;
-                break;
-            }
-        }
-
-        wallpaperStyle = style;
-
-        if (currentColorKey) {
-            changeColor(currentColorKey);
-        }
+    function renderWallpaperOptions() {
+        wallpaperOptions.innerHTML = '';
+        const group = json.wallpapers_by_color[selectedColor];
+        Object.entries(group).forEach(([styleName, entry]) => {
+            const img = document.createElement('img');
+            img.src = findImageById(entry.preview);
+            img.alt = styleName;
+            if (styleName === selectedStyle) img.classList.add('active');
+            img.onclick = () => {
+                selectedStyle = styleName;
+                updateWallpaper();
+                renderWallpaperOptions();
+            };
+            wallpaperOptions.appendChild(img);
+        });
     }
+
+    function renderAppIcons() {
+        const visibleApps = json.app_icons.filter(a => !(a.notes && a.notes.includes('unused')));
+        const appsPerPage = 6;
+        pagesCount = Math.ceil(visibleApps.length / appsPerPage);
+
+        pagesWrapper.innerHTML = '';
+        paginationDots.innerHTML = '';
+
+        for (let i = 0; i < pagesCount; i++) {
+            const page = document.createElement('div');
+            page.className = 'page';
+
+            const apps = visibleApps.slice(i * appsPerPage, (i + 1) * appsPerPage);
+            apps.forEach(app => {
+                const appEl = document.createElement('div');
+                appEl.className = 'app';
+
+                const img = new Image();
+                img.src = findImageById(app.id);
+                img.alt = app.name;
+                img.width = 112;
+                img.height = 112;
+
+                const label = document.createElement('p');
+                label.textContent = app.name;
+
+                appEl.appendChild(img);
+                appEl.appendChild(label);
+                page.appendChild(appEl);
+            });
+
+            pagesWrapper.appendChild(page);
+
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            paginationDots.appendChild(dot);
+        }
+
+        currentPage = 0;
+        currentTranslate = 0;
+        prevTranslate = 0;
+        updateSlider();
+    }
+
+    function updateSlider() {
+        pagesWrapper.style.transform = `translateX(${-240 * currentPage}px)`;
+        Array.from(paginationDots.children).forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === currentPage);
+        });
+    }
+
+    // Drag/swipe support
+    ipod.addEventListener('mousedown', startDrag);
+    ipod.addEventListener('mousemove', drag);
+    ipod.addEventListener('mouseup', endDrag);
+    ipod.addEventListener('mouseleave', endDrag);
+    ipod.addEventListener('touchstart', e => startDrag(e.touches[0]));
+    ipod.addEventListener('touchmove', e => drag(e.touches[0]));
+    ipod.addEventListener('touchend', e => endDrag(e.changedTouches[0]));
+
+    function startDrag(e) {
+        isDragging = true;
+        startX = e.clientX;
+        pagesWrapper.style.transition = 'none';
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        currentTranslate = prevTranslate + dx;
+        pagesWrapper.style.transform = `translateX(${currentTranslate}px)`;
+    }
+
+    function endDrag(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        const movedBy = e.clientX - startX;
+        if (movedBy < -50 && currentPage < pagesCount - 1) currentPage++;
+        if (movedBy > 50 && currentPage > 0) currentPage--;
+        currentTranslate = -240 * currentPage;
+        prevTranslate = currentTranslate;
+        pagesWrapper.style.transition = 'transform 0.3s ease';
+        updateSlider();
+    }
+
+    // Match images using ID prefix only
+    function findImageById(id) {
+        const prefix = id.split('_')[0];
+        return imageMap.get(prefix)?.[0] || '';
+    }
+
+    function getApproxColor(name) {
+        const c = name.toLowerCase();
+        if (c.includes('gray') || c.includes('slate')) return '#444';
+        if (c.includes('red')) return '#c70007';
+        if (c.includes('green')) return '#5bad53';
+        if (c.includes('yellow')) return '#bfbf00';
+        if (c.includes('blue')) return '#008a96';
+        if (c.includes('purple')) return '#bf6d93';
+        if (c.includes('pink')) return '#f76a52';
+        if (c.includes('silver')) return '#aaaaaa';
+        if (c.includes('gold')) return '#d4af37';
+        return '#777';
+    }
+
+
+    const showImagesBtn = document.getElementById('showImagesBtn');
+    const filteredImageDump = document.getElementById('filteredImageDump');
+
+    let lastFilteredImages = [];
+
+    showImagesBtn.addEventListener('click', () => {
+        if (!lastFilteredImages.length) {
+            alert("No images loaded yet.");
+            return;
+        }
+
+        filteredImageDump.innerHTML = '<h3>Filtered Firmware Images</h3>';
+        lastFilteredImages.forEach(img => {
+            const idString = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
+            const container = document.createElement('div');
+            container.style = 'display: inline-block; margin: 6px; text-align: center;';
+
+            const imageElement = new Image();
+            imageElement.src = img.dataURL;
+            imageElement.alt = idString;
+            // imageElement.width = 80;
+            // imageElement.height = 80;
+
+            const label = document.createElement('div');
+            label.style = 'font-size: 12px;';
+            label.textContent = idString;
+
+            container.appendChild(imageElement);
+            container.appendChild(label);
+            filteredImageDump.appendChild(container);
+        });
+    });
+
 </script>
+
+
+</body>
 </html>
