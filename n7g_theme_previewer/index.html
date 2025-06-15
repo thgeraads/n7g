@@ -36,7 +36,7 @@
             font-family: sans-serif;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            /*align-items: center;*/
         }
 
         h2 {
@@ -82,13 +82,16 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             /*align-items: center;*/
-            /*justify-items: center;*/
-            padding-top: 10px;
+            justify-items: center;
+            /*padding-top: 10px;*/
             box-sizing: border-box;
         }
 
         .app {
+            display: flex;
             text-align: center;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .app img {
@@ -98,11 +101,16 @@
         }
 
         .app p {
-            margin-top: -16px;
+            margin-top: -8px;
+            margin-bottom: 0;
             font-size: 13px;
             font-weight: bold;
             color: white;
             user-select: none;
+        }
+
+        .container{
+            padding:2rem;
         }
 
         .pagination {
@@ -267,6 +275,14 @@
             margin-right: 20px;
         }
 
+        .dropdown-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-right: 20px;
+        }
+
+
         .color-preview {
             width: 24px;
             height: 24px;
@@ -276,49 +292,73 @@
             vertical-align: middle;
         }
 
-        .slate{
+        .slate {
             background-color: #4f5864;
         }
 
-        .silver{
+        .silver {
             background-color: #ecf0ef;
         }
 
-        .blue{
+        .blue {
             background-color: #45bdd8;
         }
 
-        .green{
+        .green {
             background-color: #70c093;
         }
 
-        .yellow{
+        .yellow {
             background-color: #d7dc48;
         }
 
-        .pink{
+        .pink {
             background-color: #f47578;
         }
 
-        .purple{
+        .purple {
             background-color: #cf91cc;
         }
 
-        .red{
+        .red {
             background-color: #f33a3d;
         }
 
-        .color-preview.blank{
-            height: 0; !important;
-            width: 0; !important;
+        .color-preview.blank {
+            height: 0;
+        !important;
+            width: 0;
+        !important;
             background-color: transparent;
             padding: 0;
             margin: 0;
         }
 
-        .dropdown-item > div >  span{
+        .dropdown-item > div > span {
             align-items: center;
             margin-left: 30px
+        }
+
+        .footer{
+            width: 100%;
+            height: auto;
+            padding: 2px;
+            position: fixed;
+            bottom: 0;
+            background-color: #8f909b80;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            font-size: 12px;
+
+            &>a{
+                color: #606470;
+                /*text-decoration: none;*/
+            }
         }
 
     </style>
@@ -341,58 +381,86 @@
         <a class="md3e-btn">
             <div class="button-content">
 
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                     fill="#1f1f1f">
+                    <path d="M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z"/>
+                </svg>
                 <span>Request a feature?</span>
             </div>
         </a>
     </div>
 </div>
+<div class="container">
+
+    <div class="dropdown-group">
+        <div class="dropdown" id="firmware-dropdown">
+            <div class="dropdown-toggle" tabindex="0" id="firmwareDropdownToggle">Select a firmware</div>
+            <div class="dropdown-menu" id="firmwareDropdownMenu">
+            </div>
+        </div>
+
+        <div class="dropdown" id="color-dropdown">
+            <div class="dropdown-toggle" tabindex="0" id="colorDropdownToggle">
+                <div class="color-preview blank"></div>
+                Select a device color
+            </div>
+            <div class="dropdown-menu" id="colorDropdownMenu">
+                <div class="dropdown-item">
+                    <div class="color-preview slate"></div>
+                    <span>Slate</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview silver"></div>
+                    <span>Silver</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview blue"></div>
+                    <span>Blue</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview green"></div>
+                    <span>Green</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview yellow"></div>
+                    <span>Yellow</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview pink"></div>
+                    <span>Pink</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview purple"></div>
+                    <span>Purple</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview red"></div>
+                    <span>Red</span></div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="sim">
+        <h2>Upload .IPSW</h2>
+
+        <input type="file" id="fileInput" accept=".ipsw">
+
+        <div class="ipod-wrapper" id="ipod">
+            <div class="status-bar">9:41 AM</div>
+            <div class="pages-wrapper" id="pagesWrapper"></div>
+            <div class="pagination" id="paginationDots"></div>
+        </div>
+    </div>
+
+    <!--<button id="showImagesBtn">Show All Filtered Images</button>-->
+    <!--<div id="filteredImageDump" style="margin-top: 20px;"></div>-->
 
 
-<div class="dropdown" id="firmware-dropdown">
-    <div class="dropdown-toggle" tabindex="0" id="firmwareDropdownToggle">Select a firmware</div>
-    <div class="dropdown-menu" id="firmwareDropdownMenu">
-        <div class="dropdown-item">Stock</div>
-        <div class="dropdown-item">Option 2</div>
-        <div class="dropdown-item">Option 3</div>
+    <div class="controls">
+        <div class="colors" id="colorButtons"></div>
+        <div class="wallpaperScreen">
+            <div class="wallpaperScreenWallpapers" id="wallpaperOptions"></div>
+        </div>
     </div>
 </div>
 
-<div class="dropdown" id="color-dropdown">
-    <div class="dropdown-toggle" tabindex="0" id="colorDropdownToggle"><div class="color-preview blank"></div>Select a device color</div>
-    <div class="dropdown-menu" id="colorDropdownMenu">
-        <div class="dropdown-item"><div class="color-preview slate"></div><span>Slate</span></div>
-        <div class="dropdown-item"><div class="color-preview silver"></div><span>Silver</span></div>
-        <div class="dropdown-item"><div class="color-preview blue"></div><span>Blue</span></div>
-        <div class="dropdown-item"><div class="color-preview green"></div><span>Green</span></div>
-        <div class="dropdown-item"><div class="color-preview yellow"></div><span>Yellow</span></div>
-        <div class="dropdown-item"><div class="color-preview pink"></div><span>Pink</span></div>
-        <div class="dropdown-item"><div class="color-preview purple"></div><span>Purple</span></div>
-        <div class="dropdown-item"><div class="color-preview red"></div><span>Red</span></div>
-
-    </div>
-</div>
-
-
-<h2>Upload .IPSW</h2>
-
-<input type="file" id="fileInput" accept=".ipsw">
-
-<div class="ipod-wrapper" id="ipod">
-    <div class="status-bar">9:41 AM</div>
-    <div class="pages-wrapper" id="pagesWrapper"></div>
-    <div class="pagination" id="paginationDots"></div>
-</div>
-
-<!--<button id="showImagesBtn">Show All Filtered Images</button>-->
-<!--<div id="filteredImageDump" style="margin-top: 20px;"></div>-->
-
-
-<div class="controls">
-    <div class="colors" id="colorButtons"></div>
-    <div class="wallpaperScreen">
-        <div class="wallpaperScreenWallpapers" id="wallpaperOptions"></div>
-    </div>
+<div class="footer">
+    <a href="https://github.com/thgeraads/n7g/theme_previewer">iPod Nano 7 Theme Previewer</a>
+    <p></p>
 </div>
 
 <!-- Include FFLATE support -->
@@ -420,19 +488,79 @@
     let startX = 0;
     let currentTranslate = 0;
     let prevTranslate = 0;
+    let lastFilteredImages = [];
 
     fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
-
         const buffer = await file.arrayBuffer();
+        await processIPSW(buffer);
+    });
+
+    // Handle firmware dropdown
+
+    // get all firmwares
+    const firmwareJson = fetch("/n7g_theme_previewer/assets/firmwares.json")
+        .then(response => response.json())
+        .then(data => {
+            const firmwareDropdownMenu = document.querySelector('#firmwareDropdownMenu');
+            firmwareDropdownMenu.innerHTML = '';
+
+            data.forEach(firmware => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = firmware.name;
+
+                item.addEventListener('click', async () => {
+                    const directURL = firmware.url;
+                    const proxyURL = `https://corsproxy.io/?${encodeURIComponent(directURL)}`;
+
+                    try {
+                        // Try direct fetch first (in case it's CORS-friendly)
+                        let response = await fetch(directURL);
+                        if (!response.ok) throw new Error("Direct fetch failed");
+
+                        const buffer = await response.arrayBuffer();
+                        await processIPSW(buffer);
+                    } catch (directErr) {
+                        try {
+                            // Fallback to proxy
+                            console.warn(`Direct fetch failed, using CORS proxy: ${directErr.message}`);
+                            const proxyResponse = await fetch(proxyURL);
+                            if (!proxyResponse.ok) throw new Error("CORS proxy fetch failed");
+
+                            const buffer = await proxyResponse.arrayBuffer();
+                            await processIPSW(buffer);
+                        } catch (proxyErr) {
+                            alert(`Error loading firmware:\n${proxyErr.message}`);
+                        }
+                    }
+                });
+
+                firmwareDropdownMenu.appendChild(item);
+            });
+        });
+
+
+
+    // document.querySelector('#firmwareDropdownMenu .dropdown-item')?.addEventListener('click', async () => {
+    //     try {
+    //         const response = await fetch('./assets/stock_2015.ipsw');
+    //         if (!response.ok) throw new Error("Failed to fetch stock firmware.");
+    //         const buffer = await response.arrayBuffer();
+    //         await processIPSW(buffer);
+    //     } catch (err) {
+    //         alert(`Error loading stock firmware: ${err.message}`);
+    //     }
+    // });
+
+    async function processIPSW(buffer) {
         const images = await extractFilteredImages(buffer, json);
         lastFilteredImages = images;
 
-
         imageMap.clear();
         for (const img of images) {
-            const idPrefix = img.id.toString(); // Just the numeric ID
+            const idPrefix = img.id.toString();
             const url = img.dataURL;
             if (!imageMap.has(idPrefix)) {
                 imageMap.set(idPrefix, []);
@@ -444,14 +572,11 @@
         updateWallpaper();
         renderWallpaperOptions();
         renderAppIcons();
-    });
+    }
 
     function buildColorButtons() {
         colorButtons.innerHTML = '';
-        const allowedColors = [
-            "Silver", "Blue", "Green", "Yellow", "Pink", "Purple", "Red", "Slate"
-        ];
-
+        const allowedColors = ["Silver", "Blue", "Green", "Yellow", "Pink", "Purple", "Red", "Slate"];
         allowedColors.forEach(colorName => {
             const btn = document.createElement('div');
             btn.className = 'btn';
@@ -544,7 +669,6 @@
         });
     }
 
-    // Drag/swipe support
     ipod.addEventListener('mousedown', startDrag);
     ipod.addEventListener('mousemove', drag);
     ipod.addEventListener('mouseup', endDrag);
@@ -578,7 +702,6 @@
         updateSlider();
     }
 
-    // Match images using ID prefix only
     function findImageById(id) {
         const prefix = id.split('_')[0];
         return imageMap.get(prefix)?.[0] || '';
@@ -597,42 +720,8 @@
         if (c.includes('gold')) return '#d4af37';
         return '#777';
     }
-
-
-    const showImagesBtn = document.getElementById('showImagesBtn');
-    const filteredImageDump = document.getElementById('filteredImageDump');
-
-    let lastFilteredImages = [];
-
-    showImagesBtn.addEventListener('click', () => {
-        if (!lastFilteredImages.length) {
-            alert("No images loaded yet.");
-            return;
-        }
-
-        filteredImageDump.innerHTML = '<h3>Filtered Firmware Images</h3>';
-        lastFilteredImages.forEach(img => {
-            const idString = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
-            const container = document.createElement('div');
-            container.style = 'display: inline-block; margin: 6px; text-align: center;';
-
-            const imageElement = new Image();
-            imageElement.src = img.dataURL;
-            imageElement.alt = idString;
-            // imageElement.width = 80;
-            // imageElement.height = 80;
-
-            const label = document.createElement('div');
-            label.style = 'font-size: 12px;';
-            label.textContent = idString;
-
-            container.appendChild(imageElement);
-            container.appendChild(label);
-            filteredImageDump.appendChild(container);
-        });
-    });
-
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
