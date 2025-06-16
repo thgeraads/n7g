@@ -1,11 +1,11 @@
 [
   {
     "name": "Stock (2015)",
-    "url": "https://ipsw.zeehondie.net/iPod_1.1.2_39A10023_2015_repack"
+    "url": "https://ipsw.zeehondie.net/iPod_1.1.2_39A10023_2015_repack.ipsw"
   },
   {
     "name": "iPodOS18",
     "author": "Notdbrand",
-    "url": "https://objects.githubusercontent.com/github-production-release-asset-2e65be/897278143/ac082964-b76a-4c04-bd50-989c7b984ac4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=releaseassetproduction%2F20250615%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250615T205749Z&X-Amz-Expires=300&X-Amz-Signature=87a1f2e96b3b4c831b8b1173af82aaeb033541f6b40735733540a29a4e60888b&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3DiPodOS_18.1_2015.ipsw"
+    "url": "https://github.com/Notdbrand/iPodOS18/releases/download/v18.1/iPodOS_18.1_2012.ipsw"
   }
 ]
