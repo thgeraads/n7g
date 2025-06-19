@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <title>iPod UI Preview</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <!--OpenGraph tags-->
+
+    <meta property="og:title" content="iPod Nano 7 Theme Previewer">
+    <meta property="og:description" content="Preview iPod Nano 7 themes with this interactive tool.">
+    <meta property="og:image" content="https://raw.githubusercontent.com/thgeraads/n7g/refs/heads/main/n7g_theme_previewer/assets/graphic_space_gray.svg">
+    <meta property="og:url" content="https://thgeraads.github.io/n7g/n7g_theme_previewer/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="iPod Nano 7 Theme Previewer">
+
     <style>
 
         a {
@@ -395,7 +406,7 @@
             animation: fadeIn 0.2s ease-out;
         }
 
-        .upload-title{
+        .upload-title {
             margin-top: 0;
         }
 
@@ -635,10 +646,9 @@
             data.forEach(firmware => {
                 const item = document.createElement('div');
                 item.className = 'dropdown-item';
-                if(firmware.author){
+                if (firmware.author) {
                     item.textContent = firmware.author + '/' + firmware.name;
-                }
-                else{
+                } else {
                     item.textContent = firmware.name;
                 }
                 // item.textContent = firmware.name;
