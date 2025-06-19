@@ -1,11 +1,11 @@
 export const json = {
     "app_icons": [{"id": "229442202_1888", "name": "Music"}, {
         "id": "229442211_1888",
-        "name": "Video"
+        "name": "Videos"
     }, {"id": "229442206_1888", "name": "Fitness"}, {
         "id": "229442203_1888",
         "name": "Podcasts"
-    }, {"id": "229442204_1888", "name": "Photo"}, {
+    }, {"id": "229442204_1888", "name": "Photos"}, {
         "id": "229442208_1888",
         "name": "Radio"
     }, {"id": "229442205_1888", "name": "Settings"}, {

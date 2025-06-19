@@ -6,6 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
 
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        * {
+            font-family: "Apple Gothic Regular", "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+
         /* open-sans-regular - latin */
         @font-face {
             font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
@@ -23,11 +32,13 @@
             src: url('./fonts/open-sans-v43-latin-500.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
         }
 
-        * {
-            user-select: none;
 
+        @font-face {
+            font-family: "Apple Gothic Regular";
+            font-style: normal;
+            font-weight: 400;
+            /*src: url('https://ipswproxy.zeehondie.net/?url=https://github.com/justrajdeep/fonts/raw/refs/heads/master/AppleGothic.ttf') format('truetype'); !* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ *!*/
         }
-
 
         html, body {
             margin: 0;
@@ -63,12 +74,13 @@
             height: 27px;
             /*background-image: url("assets/statusbar_wallpaper.jpg");*/
             display: flex;
-            background: rgba(0, 0, 0, 0.5);
+            /*background: rgba(0, 0, 0, 0.5);*/
             justify-content: center;
             align-items: center;
             color: white;
             font-weight: bold;
             font-size: 14px;
+            text-shadow: 0 0 50px rgba(0, 0, 0, 1), 1px 1px 3px rgba(0, 0, 0, 0.6);
         }
 
         .pages-wrapper {
@@ -78,6 +90,8 @@
         }
 
         .page {
+            margin-top: 7px;
+            height: 369px;
             min-width: 240px;
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -91,7 +105,7 @@
             display: flex;
             text-align: center;
             flex-direction: column;
-            justify-content: center;
+            /*justify-content: center;*/
         }
 
         .app img {
@@ -107,10 +121,17 @@
             font-weight: bold;
             color: white;
             user-select: none;
+            /*    large shadow*/
+            text-shadow: 0 0 50px rgba(0, 0, 0, 1), 1px 0px 1px rgba(0, 0, 0, 0.6);
         }
 
-        .container{
-            padding:2rem;
+        .container {
+            padding: 2rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            /*width: 90svw;*/
+
         }
 
         .pagination {
@@ -134,7 +155,7 @@
         }
 
         .controls {
-            margin-top: 16px;
+            /*margin-top: 16px;*/
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -157,21 +178,29 @@
         }
 
         .wallpaperScreen {
-            background: rgba(0, 0, 0, 0.2);
+            width: 240px;
+            /*background: rgba(0, 0, 0, 0.2);*/
             padding: 10px;
             border-radius: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #wallpaperOptions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
         }
 
         .wallpaperScreenWallpapers img {
-            /*width: 110px;*/
-            /*height: 70px*/
+            width: 117px;
+            height: 200px;
             margin: 4px;
             cursor: pointer;
             border: 2px solid transparent;
         }
 
         .wallpaperScreenWallpapers img.active {
-            border-color: white;
+            border: 2px solid #ffcc00;
         }
 
         .navbar {
@@ -280,6 +309,7 @@
             flex-direction: column;
             gap: 10px;
             margin-right: 20px;
+            align-items: center;
         }
 
 
@@ -339,7 +369,7 @@
             margin-left: 30px
         }
 
-        .footer{
+        .footer {
             width: 100%;
             height: auto;
             padding: 2px;
@@ -355,11 +385,103 @@
             letter-spacing: -0.5px;
             font-size: 12px;
 
-            &>a{
+            & > a {
                 color: #606470;
                 /*text-decoration: none;*/
             }
         }
+
+        .modal {
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .upload-title{
+            margin-top: 0;
+        }
+
+
+        .modal-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 90%;
+            gap: 20px;
+
+            > svg {
+                transform: scale(1.4);
+                fill: #4f5d8c;
+                stroke: #4f5d8c;
+            }
+        }
+
+        .modal-text-content {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            & > div:last-child {
+                font-size: 12px !important;
+                color: #606470;
+            }
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            width: 100%;
+            color: #333;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #f0f0f0;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-wrapper {
+            /*background-color: white;*/
+            /*padding: 25px;*/
+            /*border-radius: 25px;*/
+            text-align: center;
+            margin: 0 0 20px 0px;
+            width: 100%;
+        }
+
+        .upload-title {
+            font-size: 24px;
+            font-weight: normal;
+            margin: 0 0 15px 0px;
+            color: #3a3c45;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -45%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .sim {
+            justify-self: end;
+        }
+
 
     </style>
     <link rel="stylesheet" href="dropdown.css">
@@ -368,7 +490,7 @@
 <div class="navbar">
     <p>iPod Nano 7 Theme Previewer</p>
     <div class="button-group">
-        <a class="md3e-btn err">
+        <a href='https://github.com/thgeraads/n7g/issues/new' class="md3e-btn err">
             <div class="button-content">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
                      fill="#1f1f1f">
@@ -378,7 +500,7 @@
             </div>
         </a>
 
-        <a class="md3e-btn">
+        <a href="https://github.com/thgeraads/n7g/issues/new" class="md3e-btn">
             <div class="button-content">
 
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
@@ -397,6 +519,13 @@
             <div class="dropdown-toggle" tabindex="0" id="firmwareDropdownToggle">Select a firmware</div>
             <div class="dropdown-menu" id="firmwareDropdownMenu">
             </div>
+        </div>
+
+        <p>- or -</p>
+
+        <div class="upload-wrapper">
+            <label for="fileInput" class="custom-file-upload">Upload .IPSW</label>
+            <input type="file" id="fileInput" accept=".ipsw">
         </div>
 
         <div class="dropdown" id="color-dropdown">
@@ -432,26 +561,27 @@
 
             </div>
         </div>
+
+
     </div>
 
     <div class="sim">
-        <h2>Upload .IPSW</h2>
 
-        <input type="file" id="fileInput" accept=".ipsw">
 
         <div class="ipod-wrapper" id="ipod">
-            <div class="status-bar">9:41 AM</div>
+            <div class="status-bar">
+
+            </div>
             <div class="pages-wrapper" id="pagesWrapper"></div>
             <div class="pagination" id="paginationDots"></div>
         </div>
     </div>
 
-    <!--<button id="showImagesBtn">Show All Filtered Images</button>-->
-    <!--<div id="filteredImageDump" style="margin-top: 20px;"></div>-->
-
 
     <div class="controls">
-        <div class="colors" id="colorButtons"></div>
+        <div class="colors" id="colorButtons">
+
+        </div>
         <div class="wallpaperScreen">
             <div class="wallpaperScreenWallpapers" id="wallpaperOptions"></div>
         </div>
@@ -497,38 +627,34 @@
         await processIPSW(buffer);
     });
 
-    // Handle firmware dropdown
-
-    // get all firmwares
     const firmwareJson = fetch("/n7g_theme_previewer/assets/firmwares.json")
         .then(response => response.json())
         .then(data => {
             const firmwareDropdownMenu = document.querySelector('#firmwareDropdownMenu');
             firmwareDropdownMenu.innerHTML = '';
-
             data.forEach(firmware => {
                 const item = document.createElement('div');
                 item.className = 'dropdown-item';
-                item.textContent = firmware.name;
-
+                if(firmware.author){
+                    item.textContent = firmware.author + '/' + firmware.name;
+                }
+                else{
+                    item.textContent = firmware.name;
+                }
+                // item.textContent = firmware.name;
                 item.addEventListener('click', async () => {
+                    createModal("Loading IPSW...", "(this may take a while)");
                     const directURL = firmware.url;
-                    const proxyURL = `https://corsproxy.io/?${encodeURIComponent(directURL)}`;
-
+                    const proxyURL = `https://ipswproxy.zeehondie.net/?url=${encodeURIComponent(directURL)}`;
                     try {
-                        // Try direct fetch first (in case it's CORS-friendly)
                         let response = await fetch(directURL);
                         if (!response.ok) throw new Error("Direct fetch failed");
-
                         const buffer = await response.arrayBuffer();
                         await processIPSW(buffer);
                     } catch (directErr) {
                         try {
-                            // Fallback to proxy
-                            console.warn(`Direct fetch failed, using CORS proxy: ${directErr.message}`);
                             const proxyResponse = await fetch(proxyURL);
                             if (!proxyResponse.ok) throw new Error("CORS proxy fetch failed");
-
                             const buffer = await proxyResponse.arrayBuffer();
                             await processIPSW(buffer);
                         } catch (proxyErr) {
@@ -536,67 +662,31 @@
                         }
                     }
                 });
-
                 firmwareDropdownMenu.appendChild(item);
             });
         });
 
-
-
-    // document.querySelector('#firmwareDropdownMenu .dropdown-item')?.addEventListener('click', async () => {
-    //     try {
-    //         const response = await fetch('./assets/stock_2015.ipsw');
-    //         if (!response.ok) throw new Error("Failed to fetch stock firmware.");
-    //         const buffer = await response.arrayBuffer();
-    //         await processIPSW(buffer);
-    //     } catch (err) {
-    //         alert(`Error loading stock firmware: ${err.message}`);
-    //     }
-    // });
-
     async function processIPSW(buffer) {
         const images = await extractFilteredImages(buffer, json);
         lastFilteredImages = images;
-
         imageMap.clear();
         for (const img of images) {
             const idPrefix = img.id.toString();
             const url = img.dataURL;
-            if (!imageMap.has(idPrefix)) {
-                imageMap.set(idPrefix, []);
-            }
+            if (!imageMap.has(idPrefix)) imageMap.set(idPrefix, []);
             imageMap.get(idPrefix).push(url);
         }
-
-        buildColorButtons();
         updateWallpaper();
         renderWallpaperOptions();
         renderAppIcons();
-    }
-
-    function buildColorButtons() {
-        colorButtons.innerHTML = '';
-        const allowedColors = ["Silver", "Blue", "Green", "Yellow", "Pink", "Purple", "Red", "Slate"];
-        allowedColors.forEach(colorName => {
-            const btn = document.createElement('div');
-            btn.className = 'btn';
-            btn.style.backgroundColor = getApproxColor(colorName);
-            btn.title = colorName;
-            btn.onclick = () => {
-                selectedColor = colorName;
-                selectedStyle = 'solid';
-                updateWallpaper();
-                renderWallpaperOptions();
-            };
-            colorButtons.appendChild(btn);
-        });
+        closeModal();
+        updateStatusBarTime()
     }
 
     function updateWallpaper() {
         const wallId = json.wallpapers_by_color[selectedColor]?.[selectedStyle]?.full_res;
-        if (!wallId) return;
         const wallpaper = findImageById(wallId);
-        if (wallpaper) {
+        if (wallId && wallpaper) {
             ipod.style.backgroundImage = `url(${wallpaper})`;
         }
     }
@@ -622,40 +712,31 @@
         const visibleApps = json.app_icons.filter(a => !(a.notes && a.notes.includes('unused')));
         const appsPerPage = 6;
         pagesCount = Math.ceil(visibleApps.length / appsPerPage);
-
         pagesWrapper.innerHTML = '';
         paginationDots.innerHTML = '';
-
         for (let i = 0; i < pagesCount; i++) {
             const page = document.createElement('div');
             page.className = 'page';
-
             const apps = visibleApps.slice(i * appsPerPage, (i + 1) * appsPerPage);
             apps.forEach(app => {
                 const appEl = document.createElement('div');
                 appEl.className = 'app';
-
                 const img = new Image();
                 img.src = findImageById(app.id);
                 img.alt = app.name;
                 img.width = 112;
                 img.height = 112;
-
                 const label = document.createElement('p');
                 label.textContent = app.name;
-
                 appEl.appendChild(img);
                 appEl.appendChild(label);
                 page.appendChild(appEl);
             });
-
             pagesWrapper.appendChild(page);
-
             const dot = document.createElement('span');
             dot.className = 'dot' + (i === 0 ? ' active' : '');
             paginationDots.appendChild(dot);
         }
-
         currentPage = 0;
         currentTranslate = 0;
         prevTranslate = 0;
@@ -667,6 +748,70 @@
         Array.from(paginationDots.children).forEach((dot, idx) => {
             dot.classList.toggle('active', idx === currentPage);
         });
+    }
+
+    function findImageById(id) {
+        console.log(id);
+        const prefix = id.split('_')[0];
+        return imageMap.get(prefix)?.[0] || '';
+    }
+
+    function getApproxColor(name) {
+        const c = name.toLowerCase();
+        if (c.includes('gray') || c.includes('slate')) return '#444';
+        if (c.includes('red')) return '#c70007';
+        if (c.includes('green')) return '#5bad53';
+        if (c.includes('yellow')) return '#bfbf00';
+        if (c.includes('blue')) return '#008a96';
+        if (c.includes('purple')) return '#bf6d93';
+        if (c.includes('pink')) return '#f76a52';
+        if (c.includes('silver')) return '#aaaaaa';
+        if (c.includes('gold')) return '#d4af37';
+        return '#777';
+    }
+
+    function createModal(text, subtext = '') {
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        Object.assign(overlay.style, {
+            position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
+            background: 'rgba(0, 0, 0, 0.3)', backdropFilter: 'blur(4px)', zIndex: '999'
+        });
+
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        Object.assign(modal.style, {
+            width: '250px', minHeight: '50px', display: 'flex', flexDirection: 'column',
+            justifyContent: 'center', alignItems: 'center', position: 'fixed',
+            top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            backgroundColor: '#fff', borderRadius: '25px', boxShadow: '0px 5px 15px rgba(0,0,0,0.3)',
+            zIndex: '1000', overflow: 'auto', padding: '24px 18px', boxSizing: 'border-box',
+            transition: 'opacity 0.2s ease'
+        });
+
+        modal.innerHTML = `
+            <div class="modal-content" style="position: relative;">
+                <div class="modal-text-content">
+                    <div class="modal-body">${text}</div>
+                    <div class="modal-body">${subtext}</div>
+                </div>
+                <svg width="24" height="24" stroke="#000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <style>.spinner_V8m1{transform-origin:center;animation:spinner_zKoa 2s linear infinite}
+                    .spinner_V8m1 circle{stroke-linecap:round;animation:spinner_YpZS 1.5s ease-in-out infinite}
+                    @keyframes spinner_zKoa{100%{transform:rotate(360deg)}}
+                    @keyframes spinner_YpZS{0%{stroke-dasharray:0 150;stroke-dashoffset:0}
+                    47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}
+                    95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style>
+                    <g class="spinner_V8m1"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="3"></circle></g>
+                </svg>
+            </div>`;
+        document.body.appendChild(overlay);
+        document.body.appendChild(modal);
+    }
+
+    function closeModal() {
+        document.querySelector('.modal')?.remove();
+        document.querySelector('.modal-overlay')?.remove();
     }
 
     ipod.addEventListener('mousedown', startDrag);
@@ -702,45 +847,20 @@
         updateSlider();
     }
 
-    function findImageById(id) {
-        const prefix = id.split('_')[0];
-        return imageMap.get(prefix)?.[0] || '';
-    }
-
-    function getApproxColor(name) {
-        const c = name.toLowerCase();
-        if (c.includes('gray') || c.includes('slate')) return '#444';
-        if (c.includes('red')) return '#c70007';
-        if (c.includes('green')) return '#5bad53';
-        if (c.includes('yellow')) return '#bfbf00';
-        if (c.includes('blue')) return '#008a96';
-        if (c.includes('purple')) return '#bf6d93';
-        if (c.includes('pink')) return '#f76a52';
-        if (c.includes('silver')) return '#aaaaaa';
-        if (c.includes('gold')) return '#d4af37';
-        return '#777';
-    }
-</script>
-
-
-<script>
     document.addEventListener('DOMContentLoaded', () => {
         const dropdowns = document.querySelectorAll('.dropdown');
-
         dropdowns.forEach(dropdown => {
             const toggle = dropdown.querySelector('.dropdown-toggle');
             const menu = dropdown.querySelector('.dropdown-menu');
             const items = menu.querySelectorAll('.dropdown-item');
 
-            // Toggle open/close
             toggle.addEventListener('click', () => {
                 dropdowns.forEach(d => {
-                    if (d !== dropdown) d.classList.remove('open'); // close others
+                    if (d !== dropdown) d.classList.remove('open');
                 });
                 dropdown.classList.toggle('open');
             });
 
-            // Item click handler
             items.forEach(item => {
                 item.addEventListener('click', () => {
                     toggle.textContent = item.textContent;
@@ -750,7 +870,6 @@
                 });
             });
 
-            // Keyboard accessibility
             toggle.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -759,13 +878,49 @@
             });
         });
 
-        // Close on outside click
         document.addEventListener('click', (e) => {
             if (!e.target.closest('.dropdown')) {
                 dropdowns.forEach(d => d.classList.remove('open'));
             }
         });
+
+        const colorDropdownMenu = document.getElementById('colorDropdownMenu');
+        for (const color of colorDropdownMenu.querySelectorAll('.dropdown-item')) {
+            color.addEventListener('click', () => {
+                const colorPreview = color.querySelector('.color-preview');
+                if (colorPreview) {
+                    console.log(`Selected color: ${colorPreview.className}`);
+                    selectedColor = capitalizeFirstLetter(colorPreview.className.split(' ')[1]);
+                    selectedStyle = 'solid';
+                    updateWallpaper();
+                    renderWallpaperOptions();
+                }
+            });
+        }
+
+
+        function capitalizeFirstLetter(val) {
+            return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+        }
+
+        // render status bar time
+
+
     });
+
+    function updateStatusBarTime() {
+        const statusBar = document.querySelector('.status-bar');
+
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        // convert to 12 hour AM/PM
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 || 12; // convert 0 to 12 for 12-hour format
+        statusBar.textContent = `${formattedHours}:${minutes} ${ampm}`;
+    }
+
 </script>
 
 
