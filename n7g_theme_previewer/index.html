@@ -216,7 +216,7 @@
 
         .navbar {
             height: 96px;
-            width: 100svw;
+            width: 100%;
             background-color: #8f909b80;
             display: flex;
             flex-direction: row;
@@ -600,7 +600,7 @@
 </div>
 
 <div class="footer">
-    <a href="https://github.com/thgeraads/n7g/theme_previewer">iPod Nano 7 Theme Previewer</a>
+    <a href="https://github.com/thgeraads/n7g/n7g_theme_previewer">iPod Nano 7 Theme Previewer</a>
     <p></p>
 </div>
 
@@ -612,6 +612,8 @@
 <script type="module">
     import {extractFilteredImages} from './js/unpack.js';
     import {json} from './js/json.js';
+
+    let ipswLoaded = false
 
     const fileInput = document.getElementById('fileInput');
     const pagesWrapper = document.getElementById('pagesWrapper');
@@ -691,6 +693,7 @@
         renderAppIcons();
         closeModal();
         updateStatusBarTime()
+        ipswLoaded = true;
     }
 
     function updateWallpaper() {
@@ -702,6 +705,7 @@
     }
 
     function renderWallpaperOptions() {
+        if (!ipswLoaded) return;
         wallpaperOptions.innerHTML = '';
         const group = json.wallpapers_by_color[selectedColor];
         Object.entries(group).forEach(([styleName, entry]) => {
