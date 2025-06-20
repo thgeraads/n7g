@@ -15,11 +15,22 @@ export const json = {
         "id": "229442210_1888",
         "name": "iTunes U",
         "notes": "unused"
-    }, {"id": "229442201_1888", "name": "Book", "notes": "unused"}],
+    }, {"id": "229442201_1888", "name": "Audiobooks", "notes": "unused"}],
     "ui_elements": [{"id": "229442200_0064", "name": "App icon click shadow"}, {
         "id": "229442213_0064",
         "name": "Boot apple logo?"
     }],
+
+    "appContentPlaceholders": {
+        "music": "229443059_0065",
+        "videos": "229443061_0065",
+        "podcasts": "229443062_0065",
+        "photos": "229443060_0065",
+        "radio": "229443391_0065",
+        "audiobooks": "229443058_0065",
+        "itunesU": "229443063_0065",
+    },
+
     "wallpapers_by_color": {
         "Slate": {
             "solid": {"full_res": "229442215_0064", "preview": "229442228_0064"},

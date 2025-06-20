@@ -9,8 +9,28 @@
     "url": "https://github.com/Notdbrand/iPodOS18/releases/download/v18.1/iPodOS_18.1_2012.ipsw"
   },
   {
-    "name": "Vaporwave",
+    "name": "Vaporwave (2012)",
     "author": "BraixDragon",
-    "url": "https://github.com/BraixDragon/BraixNano7Themes/releases/download/v1/iPod_1.1.2_vaporwave_2012.ipsw"
+    "url": "https://github.com/BraixDragon/BraixNano7Themes/releases/download/1/iPod_1.1.2_vaporwave_2012.ipsw"
+  },
+  {
+    "name": "iOS 6 (2012)",
+    "author": "BraixDragon",
+    "url": "https://github.com/BraixDragon/BraixNano7Themes/releases/download/2/iPod_1.1.2_IOS6_2012.ipsw"
+  },
+  {
+    "name": "iOS 26 Light (2012)",
+    "author": "BraixDragon",
+    "url": "https://github.com/BraixDragon/BraixNano7Themes/releases/download/4/iPod_1.1.2_light_2012.ipsw"
+  },
+  {
+    "name": "iOS 26 Dark (2012)",
+    "author": "BraixDragon",
+    "url": "https://github.com/BraixDragon/BraixNano7Themes/releases/download/4/iPod_1.1.2_dark_2012.ipsw"
+  },
+  {
+    "name": "Windows XP (2012)",
+    "author": "narkeffich",
+    "url": "https://github.com/BraixDragon/BraixNano7Themes/releases/download/5/iPod_1.1.2_WinXP_2012_repack.ipsw"
   }
 ]

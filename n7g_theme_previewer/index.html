@@ -10,7 +10,8 @@
 
     <meta property="og:title" content="iPod Nano 7 Theme Previewer">
     <meta property="og:description" content="Preview and test iPod Nano 7 themes with this interactive tool.">
-    <meta property="og:image" content="https://raw.githubusercontent.com/thgeraads/n7g/refs/heads/main/n7g_theme_previewer/assets/graphic_space_gray.svg">
+    <meta property="og:image"
+          content="https://raw.githubusercontent.com/thgeraads/n7g/refs/heads/main/n7g_theme_previewer/assets/graphic_space_gray.svg">
     <meta property="og:url" content="https://thgeraads.github.io/n7g/n7g_theme_previewer/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="nano.zeehondie.net">
@@ -24,6 +25,15 @@
 
         * {
             font-family: "Apple Gothic Regular", "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+        }
+
+        * {
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        img {
+            pointer-events: all;
         }
 
         /* open-sans-regular - latin */
@@ -97,7 +107,19 @@
         .pages-wrapper {
             height: calc(100% - 27px);
             display: flex;
-            transition: transform 0.3s ease;
+            transition: 0.3s ease;
+        }
+
+        .backdrop {
+            transition: opacity 0.3s;
+            background-color: rgb(0, 0, 0);
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 432px;
+            display: none;
         }
 
         .page {
@@ -117,6 +139,11 @@
             text-align: center;
             flex-direction: column;
             /*justify-content: center;*/
+            height: 112px;
+        }
+
+        .app-icon-click-shadow {
+            user-select: none;
         }
 
         .app img {
@@ -406,6 +433,20 @@
             animation: fadeIn 0.2s ease-out;
         }
 
+        .toast {
+            position: fixed;
+            top: 75%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            color: Black;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
         .upload-title {
             margin-top: 0;
         }
@@ -435,6 +476,12 @@
                 font-size: 12px !important;
                 color: #606470;
             }
+        }
+
+        .fullscreenApp {
+            transition: transform 0.3s ease;
+            transform: scale(0.2);
+
         }
 
         .custom-file-upload {
@@ -572,27 +619,24 @@
 
             </div>
         </div>
-
-
     </div>
 
     <div class="sim">
-
-
         <div class="ipod-wrapper" id="ipod">
             <div class="status-bar">
-
             </div>
             <div class="pages-wrapper" id="pagesWrapper"></div>
             <div class="pagination" id="paginationDots"></div>
+            <div class="backdrop"></div>
+            <div class="fullscreenApp"></div>
+
         </div>
+
+
     </div>
 
-
     <div class="controls">
-        <div class="colors" id="colorButtons">
-
-        </div>
+        <div class="colors" id="colorButtons"></div>
         <div class="wallpaperScreen">
             <div class="wallpaperScreenWallpapers" id="wallpaperOptions"></div>
         </div>
@@ -614,6 +658,9 @@
     import {json} from './js/json.js';
 
     let ipswLoaded = false
+    let isDraggingApp = false; // add this at the top of renderAppIcons or in global scope if needed
+    let isAppOpen
+
 
     const fileInput = document.getElementById('fileInput');
     const pagesWrapper = document.getElementById('pagesWrapper');
@@ -716,6 +763,7 @@
             if (styleName === selectedStyle) img.classList.add('active');
             img.onclick = () => {
                 selectedStyle = styleName;
+                console.log("Selected style:", selectedStyle);
                 updateWallpaper();
                 renderWallpaperOptions();
             };
@@ -729,34 +777,78 @@
         pagesCount = Math.ceil(visibleApps.length / appsPerPage);
         pagesWrapper.innerHTML = '';
         paginationDots.innerHTML = '';
+
         for (let i = 0; i < pagesCount; i++) {
             const page = document.createElement('div');
             page.className = 'page';
             const apps = visibleApps.slice(i * appsPerPage, (i + 1) * appsPerPage);
+
             apps.forEach(app => {
                 const appEl = document.createElement('div');
-                appEl.className = 'app';
+                appEl.className = 'app ' + app.name.toLowerCase();
+                appEl.style.position = 'relative';
+
+                // Click shadow image setup
+                const appIconClickShadow = document.createElement('img');
+                appIconClickShadow.className = 'app-icon-click-shadow';
+                appIconClickShadow.src = findImageById('229442200_0064');
+                appIconClickShadow.width = 112;
+                appIconClickShadow.height = 112;
+                appIconClickShadow.style.position = 'absolute';
+                appIconClickShadow.style.top = '0';
+                appIconClickShadow.style.left = '0';
+                appIconClickShadow.style.display = 'none'; // Hide by default
+                appEl.appendChild(appIconClickShadow);
+
                 const img = new Image();
+                console.log("the app id is " + app.id);
                 img.src = findImageById(app.id);
                 img.alt = app.name;
                 img.width = 112;
                 img.height = 112;
+
                 const label = document.createElement('p');
                 label.textContent = app.name;
+
                 appEl.appendChild(img);
                 appEl.appendChild(label);
+
+
+                appEl.addEventListener('mousedown', () => {
+                    isDraggingApp = false;
+                    appIconClickShadow.style.display = 'block';
+                });
+
+                appEl.addEventListener('mousemove', () => {
+                    isDraggingApp = true;
+                    appIconClickShadow.style.display = 'none'; // cancel visual press effect during drag
+                });
+
+                appEl.addEventListener('mouseup', () => {
+                    if (!isDraggingApp) {
+                        // only treat as click if no drag occurred
+                        renderApp(app.name.toLowerCase());
+                    }
+                    appIconClickShadow.style.display = 'none';
+                });
+
+
                 page.appendChild(appEl);
             });
+
             pagesWrapper.appendChild(page);
+
             const dot = document.createElement('span');
             dot.className = 'dot' + (i === 0 ? ' active' : '');
             paginationDots.appendChild(dot);
         }
+
         currentPage = 0;
         currentTranslate = 0;
         prevTranslate = 0;
         updateSlider();
     }
+
 
     function updateSlider() {
         pagesWrapper.style.transform = `translateX(${-240 * currentPage}px)`;
@@ -829,6 +921,66 @@
         document.querySelector('.modal-overlay')?.remove();
     }
 
+
+    function createToast(text) {
+        // create toast popup with timer bar
+
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = text;
+        document.body.appendChild(toast);
+        toast.style.opacity = '1';
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 300); // wait for fade out before removing
+        }, 3000); // show for 3 seconds
+        // create a timer bar
+        const timerBar = document.createElement('div');
+        timerBar.style.position = 'absolute';
+        timerBar.style.bottom = '0';
+        timerBar.style.left = '0';
+        timerBar.style.height = '4px';
+        timerBar.style.backgroundColor = '#4f5d8c';
+        timerBar.style.width = '100%';
+        timerBar.style.transition = 'width 3s linear';
+        toast.appendChild(timerBar);
+        setTimeout(() => {
+            timerBar.style.width = '0%'; // animate to 0 width
+        }, 0); // start immediately
+        toast.addEventListener('click', () => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 300); // wait for fade out before removing
+        });
+
+        toast.addEventListener('mouseover', () => {
+            timerBar.style.transitionDuration = '0.1s'; // speed up on hover
+        });
+
+        toast.addEventListener('mouseout', () => {
+            timerBar.style.transitionDuration = '3s'; // reset to normal speed
+        });
+
+        toast.addEventListener('click', () => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 300); // wait for fade out before removing
+        });
+
+        // add click event to close the toast
+        toast.addEventListener('click', () => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 300); // wait for fade out before removing
+        });
+    }
+
+
     ipod.addEventListener('mousedown', startDrag);
     ipod.addEventListener('mousemove', drag);
     ipod.addEventListener('mouseup', endDrag);
@@ -838,6 +990,8 @@
     ipod.addEventListener('touchend', e => endDrag(e.changedTouches[0]));
 
     function startDrag(e) {
+        if (isAppOpen) return;
+
         isDragging = true;
         startX = e.clientX;
         pagesWrapper.style.transition = 'none';
@@ -935,6 +1089,184 @@
         const formattedHours = hours % 12 || 12; // convert 0 to 12 for 12-hour format
         statusBar.textContent = `${formattedHours}:${minutes} ${ampm}`;
     }
+
+
+    const supportedApps = ["music", "photos", "videos", "podcasts", "radio"]
+
+    function renderApp(app) {
+        if (!supportedApps.includes(app)) {
+            createToast("This app is not supported yet.");
+            return false;
+        }
+        const appOverlay = document.querySelector('.fullscreenApp');
+        appOverlay.style.width = '240px';
+        appOverlay.style.height = '432px';
+        appOverlay.style.background = 'linear-gradient(to top, #d5d6d7, #fbfbfb)';
+        // appOverlay.style.background = 'red';
+        appOverlay.style.position = 'absolute';
+        appOverlay.style.top = '0px';
+        appOverlay.style.left = '0px';
+        appOverlay.style.display = 'flex';
+        appOverlay.style.flexDirection = 'column';
+        appOverlay.style.justifyContent = 'space-between';
+        appOverlay.style.alignItems = 'center';
+        // appOverlay.style.display = "none"
+
+        const overlayStatusbar = document.createElement('div');
+        overlayStatusbar.className = 'overlay-status-bar';
+        overlayStatusbar.style.height = '27px';
+        overlayStatusbar.style.width = '100%';
+        overlayStatusbar.style.display = 'flex';
+        overlayStatusbar.style.justifyContent = 'flex-start';
+        overlayStatusbar.style.alignItems = 'center';
+        overlayStatusbar.style.background = 'url("assets/statusbar.jpg")';
+        appOverlay.appendChild(overlayStatusbar);
+
+        const statusbarTitle = document.createElement('p');
+        statusbarTitle.className = 'statusbar-title';
+        statusbarTitle.textContent = capitalizeFirstLetter(app);
+        statusbarTitle.style.color = '#292c30';
+        statusbarTitle.style.fontSize = '16px';
+        statusbarTitle.style.fontWeight = 'bold';
+        statusbarTitle.style.margin = '0';
+        statusbarTitle.style.paddingLeft = '10px';
+        overlayStatusbar.appendChild(statusbarTitle);
+
+        const appContentPlaceholder = document.createElement('img');
+        appContentPlaceholder.className = 'app-content-placeholder';
+        appContentPlaceholder.style.width = '172px';
+        appContentPlaceholder.style.height = '168px';
+        const appContentPlaceholders = json.appContentPlaceholders;
+        console.log("appContentPlaceholders: ", appContentPlaceholders);
+        console.log("app:", app)
+        const found = appContentPlaceholders[app];
+        appContentPlaceholder.src = findImageById(json.appContentPlaceholders[app]);
+        appOverlay.appendChild(appContentPlaceholder);
+
+
+        const placeholderTextContent = document.createElement('div');
+        placeholderTextContent.className = 'placeholder-text-content';
+        placeholderTextContent.style.width = '75%';
+        placeholderTextContent.style.textAlign = 'center';
+
+        const placeholderLabel = document.createElement('p');
+        placeholderLabel.style.marginBottom = '0px';
+        placeholderLabel.style.color = '#4F5D63FF';
+        placeholderLabel.style.fontWeight = 'bold';
+        placeholderLabel.textContent = (app !== 'radio')
+            ? `No ${capitalizeFirstLetter(app)}`
+            : `No ${capitalizeFirstLetter(app)} Signal`;
+        placeholderLabel.style.fontSize = '18px';
+        placeholderTextContent.appendChild(placeholderLabel);
+
+        const syncLabel = document.createElement('p');
+        syncLabel.style.marginTop = '0px';
+        syncLabel.style.color = '#4F5D63FF';
+        syncLabel.textContent = (app !== 'radio')
+            ? `You can sync ${app} content using iTunes`
+            : "Please plug in headphones for radio reception";
+        syncLabel.style.fontSize = '14px';
+        placeholderTextContent.appendChild(syncLabel);
+        appOverlay.appendChild(placeholderTextContent);
+
+        const backdrop = document.querySelector('.backdrop');
+        backdrop.style.display = 'block';
+
+        setTimeout(() => {
+            appOverlay.style.transform = 'scale(1)';
+            backdrop.style.opacity = '0.8';
+        }, 1);
+
+        setTimeout(() => {
+            backdrop.style.display = 'none';
+        }, 300);
+
+        isAppOpen = true;
+        setupDraggable();
+    }
+
+
+    function setupDraggable() {
+        const draggableApp = document.querySelector('.fullscreenApp');
+        const backdrop = document.querySelector('.backdrop');
+
+        // Drag-to-close setup
+        let isDragging = false;
+        let startX = 0;
+        let currentX = 0;
+
+        draggableApp.addEventListener('mousedown', dragStart);
+        draggableApp.addEventListener('touchstart', dragStart);
+
+        function dragStart(e) {
+            if (e.touches) e = e.touches[0];
+            isDragging = true;
+            startX = e.clientX;
+            currentX = 0;
+
+            window.addEventListener('mousemove', dragMove);
+            window.addEventListener('touchmove', dragMove, {passive: false});
+            window.addEventListener('mouseup', dragEnd);
+            window.addEventListener('touchend', dragEnd);
+        }
+
+        function dragMove(e) {
+            if (!isDragging) return;
+            if (e.touches) e = e.touches[0];
+
+            const dx = e.clientX - startX;
+            if (dx > 0) {
+                currentX = dx;
+                draggableApp.style.transition = 'none';
+                draggableApp.style.transform = `translateX(${dx}px) scale(1)`;
+                e.preventDefault();
+            }
+        }
+
+        function dragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const threshold = 100;
+            draggableApp.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+
+            if (currentX > threshold) {
+                // Dismiss the app
+                draggableApp.style.transform = 'translateX(100%) scale(1)';
+                draggableApp.style.opacity = '0';
+                backdrop.style.opacity = '0';
+
+                setTimeout(() => {
+                    draggableApp.classList.remove('visible');
+                    draggableApp.style.transform = 'scale(0.2)';
+                    backdrop.style.display = 'none';
+                    draggableApp.style.opacity = '1'; // Reset opacity
+                    isAppOpen = false;
+
+                    // Clear the app content
+                    draggableApp.innerHTML = '';
+                    draggableApp.style.width = '0';
+                    draggableApp.style.height = '0';
+
+                }, 300);
+            } else {
+                // Snap back
+                draggableApp.style.transform = 'translateX(0) scale(1)';
+            }
+
+            window.removeEventListener('mousemove', dragMove);
+            window.removeEventListener('touchmove', dragMove);
+            window.removeEventListener('mouseup', dragEnd);
+            window.removeEventListener('touchend', dragEnd)
+            ;
+        }
+    }
+
+
+    function capitalizeFirstLetter(val) {
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
+
 
 </script>
 
