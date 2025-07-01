@@ -212,7 +212,7 @@ If this step fails, you may have used the wrong color format for your wallpapers
 
 Then, finally, you can repack the firmware with the following command:
 ```bash
-bash ./04_firmware_pack_7g
+bash ./06_firmware_pack_7g
 ```
 
 This will create two new IPSW files in the root directory of the repository. One for the 2012 revision and one for the 2015 revision of the iPod Nano 7th generation.
