@@ -46,12 +46,12 @@ export const json = {
             "circles": {"full_res": "229442294_0064", "preview": "229442307_0064"},
             "neutral": {"full_res": "229442215_0064", "preview": "229442228_0064"}
         },
-        "Blue": {
+        "Blue": { // This mapping is correct, and tested on a 2012 blue model.  
             "solid": {"full_res": "229442217_0064", "preview": "229442230_0064"},
             "striped": {"full_res": "229442243_0064", "preview": "229442256_0064"},
             "dotted": {"full_res": "229442269_0065  ", "preview": "229442282_0065"},
             "circles": {"full_res": "229442295_0065", "preview": "229442308_0065"},
-            "neutral": {"full_res": "229442216_0064", "preview": "229442229_0064"}
+            "neutral": {"full_res": "229442320_0064", "preview": "229442323_0064"}
         },
         "Green": { // This mapping is correct, and tested on a 2012 green model.
             "solid": {"full_res": "229442218_0065", "preview": "229442231_0064"},

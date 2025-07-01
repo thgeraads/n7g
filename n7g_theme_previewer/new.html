@@ -2,144 +2,1428 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Material 3 Style Dropdown</title>
+    <title>iPod UI Preview</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <!--OpenGraph tags-->
+
+    <meta property="og:title" content="iPod Nano 7 Theme Previewer">
+    <meta property="og:description" content="Preview and test iPod Nano 7 themes with this interactive tool.">
+    <meta property="og:image"
+          content="https://raw.githubusercontent.com/thgeraads/n7g/refs/heads/main/n7g_theme_previewer/assets/graphic_space_gray.svg">
+    <meta property="og:url" content="https://thgeraads.github.io/n7g/n7g_theme_previewer/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="nano.zeehondie.net">
+
     <style>
-        :root {
-            --primary: #6750a4;
-            --on-primary: #ffffff;
-            --surface: #ffffff;
-            --on-surface: #1c1b1f;
-            --outline: #79747e;
-            --elevation-1: 0 1px 2px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.1);
+
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: #f4f4f4;
-            padding: 2rem;
+        * {
+            font-family: "Apple Gothic Regular", "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
         }
 
-        .dropdown {
-            position: relative;
-            display: inline-block;
-            width: 240px;
-            font-size: 16px;
+        * {
+            user-select: none;
+            -webkit-user-drag: none;
         }
 
-        .dropdown-toggle {
-            background: var(--surface);
-            border: 1px solid var(--outline);
-            border-radius: 12px;
-            padding: 12px 16px;
-            width: 100%;
-            text-align: left;
-            cursor: pointer;
-            color: var(--on-surface);
+        img {
+            pointer-events: all;
+        }
+
+        /* open-sans-regular - latin */
+        @font-face {
+            font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+            font-family: 'Open Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: url('./fonts/open-sans-v43-latin-regular.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+        }
+
+        @font-face {
+            font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+            font-family: 'Open Sans';
+            font-style: normal;
+            font-weight: 500;
+            src: url('./fonts/open-sans-v43-latin-500.woff2') format('woff2'); /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+        }
+
+
+        @font-face {
+            font-family: "Apple Gothic Regular";
+            font-style: normal;
+            font-weight: 400;
+            /*src: url('https://ipswproxy.zeehondie.net/?url=https://github.com/justrajdeep/fonts/raw/refs/heads/master/AppleGothic.ttf') format('truetype'); !* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ *!*/
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            background: radial-gradient(#d2d4e4, #d5d6e6);
+            font-family: sans-serif;
             display: flex;
+            flex-direction: column;
+            /*align-items: center;*/
+        }
+
+        h2 {
+            margin: 16px 0 8px;
+        }
+
+        input {
+            margin-bottom: 12px;
+        }
+
+        .ipod-wrapper {
+            width: 240px;
+            height: 432px;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid #000;
+            background-size: cover;
+            background-position: center;
+            background-color: white;
+
+        }
+
+        .status-bar {
+            height: 27px;
+            /*background-image: url("assets/statusbar_wallpaper.jpg");*/
+            display: flex;
+            /*background: rgba(0, 0, 0, 0.5);*/
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-shadow: 0 0 50px rgba(0, 0, 0, 1), 1px 1px 3px rgba(0, 0, 0, 0.6);
+        }
+
+        .pages-wrapper {
+            height: calc(100% - 27px);
+            display: flex;
+            transition: 0.3s ease;
+        }
+
+        .backdrop {
+            transition: opacity 0.3s;
+            background-color: rgb(0, 0, 0);
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 240px;
+            height: 432px;
+            display: none;
+        }
+
+        .page {
+            margin-top: 7px;
+            height: 369px;
+            min-width: 240px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            /*align-items: center;*/
+            justify-items: center;
+            /*padding-top: 10px;*/
+            box-sizing: border-box;
+        }
+
+        .app {
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            /*justify-content: center;*/
+            height: 112px;
+        }
+
+        .app-icon-click-shadow {
+            user-select: none;
+        }
+
+        .app img {
+            width: 112px;
+            height: 112px;
+            user-select: none;
+        }
+
+        .app p {
+            margin-top: -8px;
+            margin-bottom: 0;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            user-select: none;
+            /*    large shadow*/
+            text-shadow: 0 0 50px rgba(0, 0, 0, 1), 1px 0px 1px rgba(0, 0, 0, 0.6);
+        }
+
+        .container {
+            padding: 2rem;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            /*width: 90svw;*/
+
+        }
+
+        .pagination {
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            margin: 0 3px;
+            background-color: rgba(255, 255, 255, 0.4);
+            border-radius: 50%;
+        }
+
+        .dot.active {
+            background-color: white;
+        }
+
+        .controls {
+            /*margin-top: -26px;*/
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .colors {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .wallpaperScreen {
+            width: 240px;
+            /*background: rgba(0, 0, 0, 0.2);*/
+            padding: 10px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #wallpaperOptions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .wallpaperScreenWallpapers img {
+            width: 117px;
+            height: 200px;
+            margin: 4px;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .wallpaperScreenWallpapers img.active {
+            border: 2px solid #ffcc00;
+        }
+
+        .navbar {
+            height: 96px;
+            width: 100%;
+            background-color: #8f909b80;
+            display: flex;
+            flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            box-shadow: var(--elevation-1);
-            transition: border-color 0.3s, box-shadow 0.2s;
         }
 
-        .dropdown-toggle:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(103, 80, 164, 0.3);
+        .navbar > p {
+            color: #3a3c45;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            font-size: 28px;
+            padding: 28px;
         }
 
-        .dropdown-toggle::after {
-            content: '▾';
+
+        @keyframes mde3-btn-hover {
+            0% {
+                width: 200px;
+            }
+
+            50% {
+                width: 220px;
+            }
+
+            100% {
+                width: 200px;
+            }
+
+        }
+
+        .md3e-btn {
+            height: 60px;
+            /*width: 200px;*/
+            padding: 0 20px;
+            /*padding: 20px 30px;*/
+            background-color: #8f909b80;
+            color: #3a3c45;
+            border-radius: 30px;
+            display: flex;
+            /*gap: 8px;*/
+            align-items: center;
+            justify-content: center;
+            /*justify-content: center;*/
+            transition: all 0.3s ease;
             font-size: 18px;
-            margin-left: 8px;
+            font-family: 'Open Sans', sans-serif;
+
         }
 
-        .dropdown-menu {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: var(--surface);
-            border: 1px solid var(--outline);
-            border-radius: 12px;
-            box-shadow: var(--elevation-1);
-            z-index: 1000;
-            margin-top: 4px;
-            display: none;
-            max-height: 200px;
-            overflow-y: auto;
-        }
 
-        .dropdown.open .dropdown-menu {
-            display: block;
-            animation: fadeIn 0.15s ease-out;
-        }
-
-        .dropdown-item {
-            padding: 12px 16px;
+        .md3e-btn:hover {
+            background-color: #4f5d8c;
+            border-radius: 20px;
+            color: white;
             cursor: pointer;
-            transition: background 0.2s;
+            /*animation-name: mde3-btn-hover;*/
+            animation-duration: 0.2s;
+            animation-timing-function: ease-in-out;
+            /*transition: background-color 0.3s ease, color 0.3s ease;*/
         }
 
-        .dropdown-item:hover {
-            background: rgba(103, 80, 164, 0.08);
+        .md3e-btn:hover .button-content > svg {
+            fill: white;
+            stroke: white;
         }
 
-        .dropdown-item.selected {
-            background: rgba(103, 80, 164, 0.12);
-            color: var(--primary);
+        .button-content > svg {
+            transition: all 0.3s ease;
+
+        }
+
+        .button-content {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 6px;
+            align-items: center;
+            margin-right: 3px;
+        }
+
+        .err {
+            background-color: #ec696080;
+        }
+
+        .err:hover {
+            background-color: #ac403a;
+            color: #FFFFFF;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            margin-right: 20px;
+        }
+
+        .dropdown-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-right: 20px;
+            align-items: center;
+        }
+
+
+        .color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 25px;
+            display: inline-block;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        .slate {
+            background-color: #4f5864;
+        }
+
+        .silver {
+            background-color: #ecf0ef;
+        }
+
+        .blue {
+            background-color: #45bdd8;
+        }
+
+        .green {
+            background-color: #70c093;
+        }
+
+        .yellow {
+            background-color: #d7dc48;
+        }
+
+        .pink {
+            background-color: #f47578;
+        }
+
+        .purple {
+            background-color: #cf91cc;
+        }
+
+        .red {
+            background-color: #f33a3d;
+        }
+
+        .color-preview.blank {
+            height: 0;
+        !important;
+            width: 0;
+        !important;
+            background-color: transparent;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dropdown-item > div > span {
+            align-items: center;
+            margin-left: 30px
+        }
+
+        .footer {
+            width: 100%;
+            height: auto;
+            padding: 2px;
+            position: fixed;
+            bottom: 0;
+            background-color: #8f909b80;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            font-size: 12px;
+
+            & > a {
+                color: #606470;
+                /*text-decoration: none;*/
+            }
+        }
+
+        .modal {
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        .toast {
+            position: fixed;
+            top: 75%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(255, 255, 255, 0.8);
+            color: Black;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .upload-title {
+            margin-top: 0;
+        }
+
+
+        .modal-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            width: 90%;
+            gap: 20px;
+
+            > svg {
+                transform: scale(1.4);
+                fill: #4f5d8c;
+                stroke: #4f5d8c;
+            }
+        }
+
+        .modal-text-content {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+
+            & > div:last-child {
+                font-size: 12px !important;
+                color: #606470;
+            }
+        }
+
+        .fullscreenApp {
+            transition: transform 0.3s ease;
+            transform: scale(0.2);
+
+        }
+
+        .custom-file-upload {
+            display: inline-block;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            width: 100%;
+            color: #333;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 25px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .custom-file-upload:hover {
+            background-color: #f0f0f0;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-wrapper {
+            /*background-color: white;*/
+            /*padding: 25px;*/
+            /*border-radius: 25px;*/
+            text-align: center;
+            margin: 0 0 20px 0px;
+            width: 100%;
+        }
+
+        .upload-title {
+            font-size: 24px;
+            font-weight: normal;
+            margin: 0 0 15px 0px;
+            color: #3a3c45;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: scaleY(0.95); }
-            to { opacity: 1; transform: scaleY(1); }
+            from {
+                opacity: 0;
+                transform: translate(-50%, -45%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
         }
+
+        .sim {
+            justify-self: end;
+        }
+
+
     </style>
+    <link rel="stylesheet" href="dropdown.css">
 </head>
 <body>
+<div class="navbar">
+    <p>iPod Nano 7 Theme Previewer</p>
+    <div class="button-group">
+        <a href='https://github.com/thgeraads/n7g/issues/new' class="md3e-btn err">
+            <div class="button-content">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                     fill="#1f1f1f">
+                    <path d="M480-200q66 0 113-47t47-113v-160q0-66-47-113t-113-47q-66 0-113 47t-47 113v160q0 66 47 113t113 47Zm-80-120h160v-80H400v80Zm0-160h160v-80H400v80Zm80 40Zm0 320q-65 0-120.5-32T272-240H160v-80h84q-3-20-3.5-40t-.5-40h-80v-80h80q0-20 .5-40t3.5-40h-84v-80h112q14-23 31.5-43t40.5-35l-64-66 56-56 86 86q28-9 57-9t57 9l88-86 56 56-66 66q23 15 41.5 34.5T688-640h112v80h-84q3 20 3.5 40t.5 40h80v80h-80q0 20-.5 40t-3.5 40h84v80H688q-32 56-87.5 88T480-120Z"/>
+                </svg>
+                <span>Report an issue</span>
+            </div>
+        </a>
 
-<div class="dropdown" id="dropdown">
-    <div class="dropdown-toggle" tabindex="0" id="dropdownToggle">Select an option</div>
-    <div class="dropdown-menu" id="dropdownMenu">
-        <div class="dropdown-item">Option 1</div>
-        <div class="dropdown-item">Option 2</div>
-        <div class="dropdown-item">Option 3</div>
+        <a href="https://github.com/thgeraads/n7g/issues/new" class="md3e-btn">
+            <div class="button-content">
+
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"
+                     fill="#1f1f1f">
+                    <path d="M320-240 80-480l240-240 57 57-184 184 183 183-56 56Zm320 0-57-57 184-184-183-183 56-56 240 240-240 240Z"/>
+                </svg>
+                <span>Request a feature?</span>
+            </div>
+        </a>
+    </div>
+</div>
+<div class="container">
+
+    <div class="dropdown-group">
+        <div class="dropdown" id="firmware-dropdown">
+            <div class="dropdown-toggle" tabindex="0" id="firmwareDropdownToggle">Select a firmware</div>
+            <div class="dropdown-menu" id="firmwareDropdownMenu">
+            </div>
+        </div>
+
+        <p>- or -</p>
+
+        <div class="upload-wrapper">
+            <label for="fileInput" class="custom-file-upload">Upload .IPSW</label>
+            <input type="file" id="fileInput" accept=".ipsw">
+        </div>
+
+        <div class="dropdown" id="color-dropdown">
+            <div class="dropdown-toggle" tabindex="0" id="colorDropdownToggle">
+                <div class="color-preview blank"></div>
+                Select a device color
+            </div>
+            <div class="dropdown-menu" id="colorDropdownMenu">
+                <div class="dropdown-item">
+                    <div class="color-preview slate"></div>
+                    <span>Slate</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview silver"></div>
+                    <span>Silver</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview blue"></div>
+                    <span>Blue</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview green"></div>
+                    <span>Green</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview yellow"></div>
+                    <span>Yellow</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview pink"></div>
+                    <span>Pink</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview purple"></div>
+                    <span>Purple</span></div>
+                <div class="dropdown-item">
+                    <div class="color-preview red"></div>
+                    <span>Red</span></div>
+
+            </div>
+        </div>
+
+        <!--        Checkbox-->
+
+
+        <div class="sampleContentCheckbox">
+            <input onchange="function setSampleContentValue(checked) {
+
+                if (checked) {
+                    localStorage.setItem('sampleContent', 'true');
+                } else {
+                    localStorage.setItem('sampleContent', 'false');
+                }
+            }
+            setSampleContentValue(document.getElementById('sampleContentCheckbox').checked)" type="checkbox"
+                   id="sampleContentCheckbox" checked>
+            <label for="sampleContentCheckbox">Show sample content</label>
+        </div>
+
+    </div>
+
+    <div class="sim">
+        <div class="ipod-wrapper" id="ipod">
+            <div class="status-bar">
+            </div>
+            <div class="pages-wrapper" id="pagesWrapper"></div>
+            <div class="pagination" id="paginationDots"></div>
+            <div class="backdrop"></div>
+            <div class="fullscreenApp"></div>
+
+        </div>
+
+
+    </div>
+
+    <div class="controls">
+        <div class="colors" id="colorButtons"></div>
+        <div class="wallpaperScreen">
+            <div class="wallpaperScreenWallpapers" id="wallpaperOptions"></div>
+        </div>
     </div>
 </div>
 
-<script>
-    const dropdown = document.getElementById('dropdown');
-    const toggle = document.getElementById('dropdownToggle');
-    const menu = document.getElementById('dropdownMenu');
-    const items = menu.querySelectorAll('.dropdown-item');
+<div class="footer">
+    <a href="https://github.com/thgeraads/n7g/n7g_theme_previewer">iPod Nano 7 Theme Previewer</a>
+    <p></p>
+</div>
 
-    toggle.addEventListener('click', () => {
-        dropdown.classList.toggle('open');
+<!-- Include FFLATE support -->
+<script src="https://unpkg.com/fflate@0.8.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+
+<!-- Main script -->
+<script type="module">
+    import {extractFilteredImages} from './js/unpack.js';
+    import {json} from './js/json.js';
+
+    let ipswLoaded = false
+    let isDraggingApp = false; // add this at the top of renderAppIcons or in global scope if needed
+    let isAppOpen
+
+
+    const fileInput = document.getElementById('fileInput');
+    const pagesWrapper = document.getElementById('pagesWrapper');
+    const paginationDots = document.getElementById('paginationDots');
+    const ipod = document.getElementById('ipod');
+    const colorButtons = document.getElementById('colorButtons');
+    const wallpaperOptions = document.getElementById('wallpaperOptions');
+
+    let imageMap = new Map();
+    let selectedColor = 'Green';
+    let selectedStyle = 'solid';
+    let currentPage = 0;
+    let pagesCount = 0;
+    let isDragging = false;
+    let startX = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let lastFilteredImages = [];
+
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const buffer = await file.arrayBuffer();
+        await processIPSW(buffer);
     });
 
-    items.forEach(item => {
-        item.addEventListener('click', () => {
-            toggle.textContent = item.textContent;
-            items.forEach(i => i.classList.remove('selected'));
-            item.classList.add('selected');
-            dropdown.classList.remove('open');
+    const firmwareJson = fetch("/n7g_theme_previewer/assets/firmwares.json")
+        .then(response => response.json())
+        .then(data => {
+            const firmwareDropdownMenu = document.querySelector('#firmwareDropdownMenu');
+            firmwareDropdownMenu.innerHTML = '';
+            data.forEach(firmware => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                if (firmware.author) {
+                    item.textContent = firmware.author + '/' + firmware.name;
+                } else {
+                    item.textContent = firmware.name;
+                }
+                // item.textContent = firmware.name;
+                item.addEventListener('click', async () => {
+                    createModal("Loading IPSW...", "(this may take a while)");
+                    const directURL = firmware.url;
+                    const proxyURL = `https://ipswproxy.zeehondie.net/?url=${encodeURIComponent(directURL)}`;
+                    try {
+                        let response = await fetch(directURL);
+                        if (!response.ok) throw new Error("Direct fetch failed");
+                        const buffer = await response.arrayBuffer();
+                        await processIPSW(buffer);
+                    } catch (directErr) {
+                        try {
+                            const proxyResponse = await fetch(proxyURL);
+                            if (!proxyResponse.ok) throw new Error("CORS proxy fetch failed");
+                            const buffer = await proxyResponse.arrayBuffer();
+                            await processIPSW(buffer);
+                        } catch (proxyErr) {
+                            alert(`Error loading firmware:\n${proxyErr.message}`);
+                        }
+                    }
+                });
+                firmwareDropdownMenu.appendChild(item);
+            });
         });
+
+    async function processIPSW(buffer) {
+        const images = await extractFilteredImages(buffer, json);
+        lastFilteredImages = images;
+        imageMap.clear();
+        for (const img of images) {
+            const idPrefix = img.id.toString();
+            const url = img.dataURL;
+            if (!imageMap.has(idPrefix)) imageMap.set(idPrefix, []);
+            imageMap.get(idPrefix).push(url);
+        }
+        updateWallpaper();
+        renderWallpaperOptions();
+        renderAppIcons();
+        closeModal();
+        updateStatusBarTime()
+        ipswLoaded = true;
+        renderWallpaperOptions();
+    }
+
+    function updateWallpaper() {
+        const wallId = json.wallpapers_by_color[selectedColor]?.[selectedStyle]?.full_res;
+        const wallpaper = findImageById(wallId);
+        if (wallId && wallpaper) {
+            ipod.style.backgroundImage = `url(${wallpaper})`;
+        }
+    }
+
+    function renderWallpaperOptions() {
+        if (!ipswLoaded) return;
+        wallpaperOptions.innerHTML = '';
+        const group = json.wallpapers_by_color[selectedColor];
+        Object.entries(group).forEach(([styleName, entry]) => {
+            const img = document.createElement('img');
+            img.src = findImageById(entry.preview);
+            img.alt = styleName;
+            if (styleName === selectedStyle) img.classList.add('active');
+            img.onclick = () => {
+                selectedStyle = styleName;
+                console.log("Selected style:", selectedStyle);
+                updateWallpaper();
+                renderWallpaperOptions();
+            };
+            wallpaperOptions.appendChild(img);
+        });
+    }
+
+    function renderAppIcons() {
+        const visibleApps = json.app_icons.filter(a => !(a.notes && a.notes.includes('unused')));
+        const appsPerPage = 6;
+        pagesCount = Math.ceil(visibleApps.length / appsPerPage);
+        pagesWrapper.innerHTML = '';
+        paginationDots.innerHTML = '';
+
+        for (let i = 0; i < pagesCount; i++) {
+            const page = document.createElement('div');
+            page.className = 'page';
+            const apps = visibleApps.slice(i * appsPerPage, (i + 1) * appsPerPage);
+
+            apps.forEach(app => {
+                const appEl = document.createElement('div');
+                appEl.className = 'app ' + app.name.toLowerCase();
+                appEl.style.position = 'relative';
+
+                // Click shadow image setup
+                const appIconClickShadow = document.createElement('img');
+                appIconClickShadow.className = 'app-icon-click-shadow';
+                appIconClickShadow.src = findImageById('229442200_0064');
+                appIconClickShadow.width = 112;
+                appIconClickShadow.height = 112;
+                appIconClickShadow.style.position = 'absolute';
+                appIconClickShadow.style.top = '0';
+                appIconClickShadow.style.left = '0';
+                appIconClickShadow.style.display = 'none'; // Hide by default
+                appEl.appendChild(appIconClickShadow);
+
+                const img = new Image();
+                console.log("the app id is " + app.id);
+                img.src = findImageById(app.id);
+                img.alt = app.name;
+                img.width = 112;
+                img.height = 112;
+
+                const label = document.createElement('p');
+                label.textContent = app.name;
+
+                appEl.appendChild(img);
+                appEl.appendChild(label);
+
+
+                appEl.addEventListener('mousedown', () => {
+                    isDraggingApp = false;
+                    appIconClickShadow.style.display = 'block';
+                });
+
+                appEl.addEventListener('mousemove', () => {
+                    isDraggingApp = true;
+                    appIconClickShadow.style.display = 'none'; // cancel visual press effect during drag
+                });
+
+                appEl.addEventListener('mouseup', () => {
+                    if (!isDraggingApp) {
+                        // only treat as click if no drag occurred
+                        renderApp(app.name.toLowerCase());
+                    }
+                    appIconClickShadow.style.display = 'none';
+                });
+
+
+                page.appendChild(appEl);
+            });
+
+            pagesWrapper.appendChild(page);
+
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            paginationDots.appendChild(dot);
+        }
+
+        currentPage = 0;
+        currentTranslate = 0;
+        prevTranslate = 0;
+        updateSlider();
+    }
+
+
+    function updateSlider() {
+        pagesWrapper.style.transform = `translateX(${-240 * currentPage}px)`;
+        Array.from(paginationDots.children).forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === currentPage);
+        });
+    }
+
+    function findImageById(id) {
+        console.log(id);
+        const prefix = id.split('_')[0];
+        return imageMap.get(prefix)?.[0] || '';
+    }
+
+    function getApproxColor(name) {
+        const c = name.toLowerCase();
+        if (c.includes('gray') || c.includes('slate')) return '#444';
+        if (c.includes('red')) return '#c70007';
+        if (c.includes('green')) return '#5bad53';
+        if (c.includes('yellow')) return '#bfbf00';
+        if (c.includes('blue')) return '#008a96';
+        if (c.includes('purple')) return '#bf6d93';
+        if (c.includes('pink')) return '#f76a52';
+        if (c.includes('silver')) return '#aaaaaa';
+        if (c.includes('gold')) return '#d4af37';
+        return '#777';
+    }
+
+    function createModal(text, subtext = '') {
+        const overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        Object.assign(overlay.style, {
+            position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
+            background: 'rgba(0, 0, 0, 0.3)', backdropFilter: 'blur(4px)', zIndex: '999'
+        });
+
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        Object.assign(modal.style, {
+            width: '250px', minHeight: '50px', display: 'flex', flexDirection: 'column',
+            justifyContent: 'center', alignItems: 'center', position: 'fixed',
+            top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+            backgroundColor: '#fff', borderRadius: '25px', boxShadow: '0px 5px 15px rgba(0,0,0,0.3)',
+            zIndex: '1000', overflow: 'auto', padding: '24px 18px', boxSizing: 'border-box',
+            transition: 'opacity 0.2s ease'
+        });
+
+        modal.innerHTML = `
+            <div class="modal-content" style="position: relative;">
+                <div class="modal-text-content">
+                    <div class="modal-body">${text}</div>
+                    <div class="modal-body">${subtext}</div>
+                </div>
+                <svg width="24" height="24" stroke="#000" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <style>.spinner_V8m1{transform-origin:center;animation:spinner_zKoa 2s linear infinite}
+                    .spinner_V8m1 circle{stroke-linecap:round;animation:spinner_YpZS 1.5s ease-in-out infinite}
+                    @keyframes spinner_zKoa{100%{transform:rotate(360deg)}}
+                    @keyframes spinner_YpZS{0%{stroke-dasharray:0 150;stroke-dashoffset:0}
+                    47.5%{stroke-dasharray:42 150;stroke-dashoffset:-16}
+                    95%,100%{stroke-dasharray:42 150;stroke-dashoffset:-59}}</style>
+                    <g class="spinner_V8m1"><circle cx="12" cy="12" r="9.5" fill="none" stroke-width="3"></circle></g>
+                </svg>
+            </div>`;
+        document.body.appendChild(overlay);
+        document.body.appendChild(modal);
+    }
+
+    function closeModal() {
+        document.querySelector('.modal')?.remove();
+        document.querySelector('.modal-overlay')?.remove();
+    }
+
+
+    function createToast(text) {
+        // create toast popup with timer bar
+
+        const toast = document.createElement('div');
+        toast.className = 'toast';
+        toast.textContent = text;
+        document.body.appendChild(toast);
+        toast.style.opacity = '1';
+        setTimeout(() => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 300); // wait for fade out before removing
+        }, 3000); // show for 3 seconds
+        // create a timer bar
+        const timerBar = document.createElement('div');
+        timerBar.style.position = 'absolute';
+        timerBar.style.bottom = '0';
+        timerBar.style.left = '0';
+        timerBar.style.height = '4px';
+        timerBar.style.backgroundColor = '#4f5d8c';
+        timerBar.style.width = '100%';
+        timerBar.style.transition = 'width 3s linear';
+        toast.appendChild(timerBar);
+        setTimeout(() => {
+            timerBar.style.width = '0%'; // animate to 0 width
+        }, 0); // start immediately
+        toast.addEventListener('click', () => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 300); // wait for fade out before removing
+        });
+
+        toast.addEventListener('mouseover', () => {
+            timerBar.style.transitionDuration = '0.1s'; // speed up on hover
+        });
+
+        toast.addEventListener('mouseout', () => {
+            timerBar.style.transitionDuration = '3s'; // reset to normal speed
+        });
+
+        toast.addEventListener('click', () => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 300); // wait for fade out before removing
+        });
+
+        // add click event to close the toast
+        toast.addEventListener('click', () => {
+            toast.style.opacity = '0';
+            setTimeout(() => {
+                toast.remove();
+            }, 300); // wait for fade out before removing
+        });
+    }
+
+
+    ipod.addEventListener('mousedown', startDrag);
+    ipod.addEventListener('mousemove', drag);
+    ipod.addEventListener('mouseup', endDrag);
+    ipod.addEventListener('mouseleave', endDrag);
+    ipod.addEventListener('touchstart', e => startDrag(e.touches[0]));
+    ipod.addEventListener('touchmove', e => drag(e.touches[0]));
+    ipod.addEventListener('touchend', e => endDrag(e.changedTouches[0]));
+
+    function startDrag(e) {
+        if (isAppOpen) return;
+
+        isDragging = true;
+        startX = e.clientX;
+        pagesWrapper.style.transition = 'none';
+    }
+
+    function drag(e) {
+        if (!isDragging) return;
+        const dx = e.clientX - startX;
+        currentTranslate = prevTranslate + dx;
+        pagesWrapper.style.transform = `translateX(${currentTranslate}px)`;
+    }
+
+    function endDrag(e) {
+        if (!isDragging) return;
+        isDragging = false;
+        const movedBy = e.clientX - startX;
+        if (movedBy < -50 && currentPage < pagesCount - 1) currentPage++;
+        if (movedBy > 50 && currentPage > 0) currentPage--;
+        currentTranslate = -240 * currentPage;
+        prevTranslate = currentTranslate;
+        pagesWrapper.style.transition = 'transform 0.3s ease';
+        updateSlider();
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const dropdowns = document.querySelectorAll('.dropdown');
+        dropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector('.dropdown-toggle');
+            const menu = dropdown.querySelector('.dropdown-menu');
+            const items = menu.querySelectorAll('.dropdown-item');
+
+            toggle.addEventListener('click', () => {
+                dropdowns.forEach(d => {
+                    if (d !== dropdown) d.classList.remove('open');
+                });
+                dropdown.classList.toggle('open');
+            });
+
+            items.forEach(item => {
+                item.addEventListener('click', () => {
+                    toggle.textContent = item.textContent;
+                    items.forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    dropdown.classList.remove('open');
+                });
+            });
+
+            toggle.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    dropdown.classList.toggle('open');
+                }
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.dropdown')) {
+                dropdowns.forEach(d => d.classList.remove('open'));
+            }
+        });
+
+        const colorDropdownMenu = document.getElementById('colorDropdownMenu');
+        for (const color of colorDropdownMenu.querySelectorAll('.dropdown-item')) {
+            color.addEventListener('click', () => {
+                const colorPreview = color.querySelector('.color-preview');
+                if (colorPreview) {
+                    console.log(`Selected color: ${colorPreview.className}`);
+                    selectedColor = capitalizeFirstLetter(colorPreview.className.split(' ')[1]);
+                    selectedStyle = 'solid';
+                    updateWallpaper();
+                    renderWallpaperOptions();
+                }
+            });
+        }
+
+
+        function capitalizeFirstLetter(val) {
+            return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+        }
+
+        // render status bar time
+
+
     });
 
-    document.addEventListener('click', (e) => {
-        if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove('open');
-        }
-    });
+    function updateStatusBarTime() {
+        const statusBar = document.querySelector('.status-bar');
 
-    // Optional: keyboard support
-    toggle.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            dropdown.classList.toggle('open');
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+
+        // convert to 12 hour AM/PM
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 || 12; // convert 0 to 12 for 12-hour format
+        statusBar.textContent = `${formattedHours}:${minutes} ${ampm}`;
+    }
+
+
+    const supportedApps = ["music", "photos", "videos", "podcasts", "radio"]
+    const richContentSupportedApps = ["music"];
+
+    function renderApp(app) {
+        if (!supportedApps.includes(app)) {
+            createToast("This app is not supported yet.");
+            return false;
         }
-    });
+
+        if (localStorage.getItem('sampleContent') === 'true' && !richContentSupportedApps.includes(app)) {
+            createToast("Sample content is not available for this app.");
+            return false;
+        } else if (localStorage.getItem('sampleContent') === 'true' && richContentSupportedApps.includes(app)) {
+            if (app === 'music') {
+                const appOverlay = document.querySelector('.fullscreenApp');
+                appOverlay.style.width = '240px';
+                appOverlay.style.height = '432px';
+                appOverlay.style.position = 'absolute';
+                appOverlay.style.top = '0px';
+                appOverlay.style.left = '0px';
+                appOverlay.style.display = 'flex';
+                appOverlay.style.flexDirection = 'column';
+                // appOverlay.style.justifyContent = 'space-between';
+                appOverlay.style.alignItems = 'center';
+
+
+                const statusBarMediaContent = document.createElement('div');
+                statusBarMediaContent.className = 'status-bar-media-content';
+                statusBarMediaContent.style.width = '100%';
+                statusBarMediaContent.style.height = '87px';
+                statusBarMediaContent.style.display = 'flex';
+                statusBarMediaContent.style.flexDirection = 'column';
+                statusBarMediaContent.style.justifyContent = 'center';
+                statusBarMediaContent.style.alignItems = 'start';
+                statusBarMediaContent.style.backgroundSize = '100% 87px';
+                statusBarMediaContent.style.background = 'url(' + findImageById('229443210_0064') + ')';
+                appOverlay.appendChild(statusBarMediaContent);
+
+                const statusBar = document.createElement('div');
+                statusBar.className = 'status-bar';
+                statusBar.style.width = '100%';
+                statusBar.style.height = '28px';
+                statusBar.style.display = 'flex';
+                statusBar.style.justifyContent = 'flex-start';
+                statusBar.style.alignItems = 'center';
+                statusBar.style.background = 'blue';
+                // statusBarMediaContent.appendChild(statusBar);
+
+                const overlayMediaInfoPanel = document.createElement('div');
+                overlayMediaInfoPanel.className = 'overlay-media-info-panel';
+                overlayMediaInfoPanel.style.width = '100%';
+                overlayMediaInfoPanel.style.height = '57px';
+                overlayMediaInfoPanel.style.display = 'flex';
+                overlayMediaInfoPanel.style.justifyContent = 'center';
+                overlayMediaInfoPanel.style.alignItems = 'center';
+                overlayMediaInfoPanel.style.flexDirection = 'column';
+                overlayMediaInfoPanel.style.background = 'red'
+                // statusBarMediaContent.appendChild(overlayMediaInfoPanel);
+
+
+                const artistLabel = document.createElement('p');
+                artistLabel.className = 'artist-label';
+                artistLabel.textContent = 'Artist';
+                artistLabel.style.color = '#A9A9A9';
+                artistLabel.style.fontSize = '14px';
+                artistLabel.style.margin = '0';
+                // overlayMediaInfoPanel.appendChild(artistLabel);
+
+                const songLabel = document.createElement('p');
+                songLabel.className = 'song-label';
+                songLabel.textContent = 'Song Title';
+                songLabel.style.color = '#FFFFFF';
+                songLabel.style.fontSize = '16px';
+                songLabel.style.fontWeight = 'bold';
+                songLabel.style.margin = '0';
+                // overlayMediaInfoPanel.appendChild(songLabel);
+
+                const albumLabel = document.createElement('p');
+                albumLabel.className = 'album-label';
+                albumLabel.textContent = 'Album Name';
+                albumLabel.style.color = '#A1A1A1';
+                albumLabel.style.fontSize = '14px';
+                albumLabel.style.margin = '0';
+                // overlayMediaInfoPanel.appendChild(albumLabel);
+
+
+                const albumArtPlaceholder = document.createElement('img');
+                albumArtPlaceholder.className = 'album-art-placeholder';
+                albumArtPlaceholder.style.width = '240px';
+                albumArtPlaceholder.style.height = '240px';
+                // albumArtPlaceholder.style.objectFit = 'cover';
+                albumArtPlaceholder.src = findImageById('229443135_0565');
+                appOverlay.appendChild(albumArtPlaceholder);
+
+                const musicControls = document.createElement('div');
+                musicControls.className = 'music-controls';
+                musicControls.style.width = '240px';
+                musicControls.style.height = '105px';
+                musicControls.style.display = 'flex';
+                musicControls.style.flexDirection = 'column';
+                musicControls.style.backgroundSize = '100% 125px';  // 105 + 20
+                musicControls.style.backgroundPosition = 'center -20px';  // shift image up by 20px
+                musicControls.style.justifyContent = 'space-between';
+                musicControls.style.alignItems = 'start';
+                musicControls.style.backgroundImage = 'url(' + findImageById('229443228_0064') + ')';
+
+
+                const controls = document.createElement('div');
+                controls.className = 'controls';
+                controls.style.width = '100%';
+                controls.style.height = '75px';
+                controls.style.display = 'flex';
+                controls.style.justifyContent = 'space-between';
+                controls.style.alignItems = 'center';
+                musicControls.appendChild(controls);
+
+                const playerBar = document.createElement('div');
+                playerBar.className = 'player-bar';
+                playerBar.style.width = '100%';
+                playerBar.style.height = '30px';
+                playerBar.style.paddingTop = '20px';
+                playerBar.style.display = 'flex';
+                playerBar.style.justifyContent = 'space-between';
+                playerBar.style.alignItems = 'center';
+                // playerBar.style.padding = '0 10px';
+                // musicControls.appendChild(playerBar);
+
+                appOverlay.append(musicControls);
+
+                setTimeout(() => {
+                    appOverlay.style.transform = 'scale(1)';
+                    backdrop.style.opacity = '0.8';
+                }, 1);
+
+                setTimeout(() => {
+                    backdrop.style.display = 'none';
+                }, 300);
+
+                isAppOpen = true;
+                setupDraggable();
+
+                return;
+            }
+        }
+
+
+        const appOverlay = document.querySelector('.fullscreenApp');
+        appOverlay.style.width = '240px';
+        appOverlay.style.height = '432px';
+        appOverlay.style.background = 'linear-gradient(to top, #d5d6d7, #fbfbfb)';
+        // appOverlay.style.background = 'red';
+        appOverlay.style.position = 'absolute';
+        appOverlay.style.top = '0px';
+        appOverlay.style.left = '0px';
+        appOverlay.style.display = 'flex';
+        appOverlay.style.flexDirection = 'column';
+        appOverlay.style.justifyContent = 'space-between';
+        appOverlay.style.alignItems = 'center';
+        // appOverlay.style.display = "none"
+
+        const overlayStatusbar = document.createElement('div');
+        overlayStatusbar.className = 'overlay-status-bar';
+        overlayStatusbar.style.height = '27px';
+        overlayStatusbar.style.width = '100%';
+        overlayStatusbar.style.display = 'flex';
+        overlayStatusbar.style.justifyContent = 'flex-start';
+        overlayStatusbar.style.alignItems = 'center';
+        overlayStatusbar.style.background = 'url("assets/statusbar.jpg")';
+        appOverlay.appendChild(overlayStatusbar);
+
+        const statusbarTitle = document.createElement('p');
+        statusbarTitle.className = 'statusbar-title';
+        statusbarTitle.textContent = capitalizeFirstLetter(app);
+        statusbarTitle.style.color = '#292c30';
+        statusbarTitle.style.fontSize = '16px';
+        statusbarTitle.style.fontWeight = 'bold';
+        statusbarTitle.style.margin = '0';
+        statusbarTitle.style.paddingLeft = '10px';
+        overlayStatusbar.appendChild(statusbarTitle);
+
+        const appContentPlaceholder = document.createElement('img');
+        appContentPlaceholder.className = 'app-content-placeholder';
+        appContentPlaceholder.style.width = '172px';
+        appContentPlaceholder.style.height = '168px';
+        const appContentPlaceholders = json.appContentPlaceholders;
+        console.log("appContentPlaceholders: ", appContentPlaceholders);
+        console.log("app:", app)
+        const found = appContentPlaceholders[app];
+        appContentPlaceholder.src = findImageById(json.appContentPlaceholders[app]);
+        appOverlay.appendChild(appContentPlaceholder);
+
+
+        const placeholderTextContent = document.createElement('div');
+        placeholderTextContent.className = 'placeholder-text-content';
+        placeholderTextContent.style.width = '75%';
+        placeholderTextContent.style.textAlign = 'center';
+
+        const placeholderLabel = document.createElement('p');
+        placeholderLabel.style.marginBottom = '0px';
+        placeholderLabel.style.color = '#4F5D63FF';
+        placeholderLabel.style.fontWeight = 'bold';
+        placeholderLabel.textContent = (app !== 'radio')
+            ? `No ${capitalizeFirstLetter(app)}`
+            : `No ${capitalizeFirstLetter(app)} Signal`;
+        placeholderLabel.style.fontSize = '18px';
+        placeholderTextContent.appendChild(placeholderLabel);
+
+        const syncLabel = document.createElement('p');
+        syncLabel.style.marginTop = '0px';
+        syncLabel.style.color = '#4F5D63FF';
+        syncLabel.textContent = (app !== 'radio')
+            ? `You can sync ${app} content using iTunes`
+            : "Please plug in headphones for radio reception";
+        syncLabel.style.fontSize = '14px';
+        placeholderTextContent.appendChild(syncLabel);
+        appOverlay.appendChild(placeholderTextContent);
+
+        const backdrop = document.querySelector('.backdrop');
+        backdrop.style.display = 'block';
+
+        setTimeout(() => {
+            appOverlay.style.transform = 'scale(1)';
+            backdrop.style.opacity = '0.8';
+        }, 1);
+
+        setTimeout(() => {
+            backdrop.style.display = 'none';
+        }, 300);
+
+        isAppOpen = true;
+        setupDraggable();
+    }
+
+
+    function setupDraggable() {
+        const draggableApp = document.querySelector('.fullscreenApp');
+        const backdrop = document.querySelector('.backdrop');
+
+        // Drag-to-close setup
+        let isDragging = false;
+        let startX = 0;
+        let currentX = 0;
+
+        draggableApp.addEventListener('mousedown', dragStart);
+        draggableApp.addEventListener('touchstart', dragStart);
+
+        function dragStart(e) {
+            if (e.touches) e = e.touches[0];
+            isDragging = true;
+            startX = e.clientX;
+            currentX = 0;
+
+            window.addEventListener('mousemove', dragMove);
+            window.addEventListener('touchmove', dragMove, {passive: false});
+            window.addEventListener('mouseup', dragEnd);
+            window.addEventListener('touchend', dragEnd);
+        }
+
+        function dragMove(e) {
+            if (!isDragging) return;
+            if (e.touches) e = e.touches[0];
+
+            const dx = e.clientX - startX;
+            if (dx > 0) {
+                currentX = dx;
+                draggableApp.style.transition = 'none';
+                draggableApp.style.transform = `translateX(${dx}px) scale(1)`;
+                e.preventDefault();
+            }
+        }
+
+        function dragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+
+            const threshold = 100;
+            draggableApp.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+
+            if (currentX > threshold) {
+                // Dismiss the app
+                draggableApp.style.transform = 'translateX(100%) scale(1)';
+                draggableApp.style.opacity = '0';
+                backdrop.style.opacity = '0';
+
+                setTimeout(() => {
+                    draggableApp.classList.remove('visible');
+                    draggableApp.style.transform = 'scale(0.2)';
+                    backdrop.style.display = 'none';
+                    draggableApp.style.opacity = '1'; // Reset opacity
+                    isAppOpen = false;
+
+                    // Clear the app content
+                    draggableApp.innerHTML = '';
+                    draggableApp.style.width = '0';
+                    draggableApp.style.height = '0';
+
+                }, 300);
+            } else {
+                // Snap back
+                draggableApp.style.transform = 'translateX(0) scale(1)';
+            }
+
+            window.removeEventListener('mousemove', dragMove);
+            window.removeEventListener('touchmove', dragMove);
+            window.removeEventListener('mouseup', dragEnd);
+            window.removeEventListener('touchend', dragEnd);
+        }
+    }
+
+
+    function capitalizeFirstLetter(val) {
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
 </script>
+
 
 </body>
 </html>
