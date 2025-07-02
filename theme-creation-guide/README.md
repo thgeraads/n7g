@@ -49,7 +49,7 @@ Due to how the [ipod_sun](https://github.com/CUB3D/ipod_sun) exploit works, this
 ## Step 1: Download ipod_theme repository
 - Open a terminal and run the following command to clone the repository:
 ```bash
-git clone https://github.com/nfzerox/ipod_theme .
+git clone https://github.com/nfzerox/ipod_theme ./ipod_theme
 ```
 - Change into the cloned directory:
 ```bash
