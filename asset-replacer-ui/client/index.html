@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iPod Nano 7 Theme builder (beta?)</title>
+    <style>
+    body {
+    font-family: 'Roboto', sans-serif;
+    background: #f2f2f2;
+    color: #333;
+    padding: 2em;
+    line-height: 1.6;
+    }
+
+    button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s ease;
+    }
+
+    button:hover {
+    background: #1565c0;
+    }
+
+    button:disabled {
+    background: #9e9e9e;
+    cursor: not-allowed;
+    }
+
+    .asset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    }
+
+    .asset-item {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    align-items: flex-start;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .asset-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    }
+
+    .asset-preview img,
+    .asset-preview canvas {
+    image-rendering: pixelated;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    background: #fafafa;
+    }
+
+    .asset-preview input[type="file"] {
+    margin-top: 10px;
+    }
+
+    .info {
+    font-size: 13px;
+    margin-top: 8px;
+    color: #555;
+    }
+
+    #buildDownloadButton,
+    #exportButton,
+    #copyAllBtn,
+    #toggleViewBtn {
+    margin-top: 20px;
+    display: block;
+    }
+</style>
+</head>
+<body>
+
+<h1>iPod Nano 7 Theme builder (beta?)</h1>
+
+<p>Select an <code>.ipsw</code> file. This will display each image and let you upload a replacement. Build & download IPSW at the bottom of the page.</p>
+
+<h1>Please read this before getting started</h1>
+<p>You can show <b>all</b> assets by clicking the "show all assets" button below. THIS WILL CLEAR ALL YOUR UPLOADED ASSETS. If you intend to change more than is displayed in "simple mode", click that button BEFORE getting started. You've been warned.</p>
+<p>Wallpapers are grouped by type. This means you can upload a replacement and click the "sync to group" button and it'll apply that replacement to all images in the group. (solid, dotted, striped, circles) This is useful for wallpapers, as you can upload one image and apply it to all wallpapers at once. Uploading individual wallpapers per color is supported. <b>Clicking that button WILL overwrite all custom assets you've uploaded to other wallpapers of that group. </b>Clicking that button on any other asset won't do anything.</p>
+<p>When modifying existing custom themes, be sure to press the "copy from origin" button to use the custom theme assets. <b>Not doing this will lead to any unreplaced assets becoming stock assets. This WILL overwrite any assets you've already uploaded</b></p>
+
+<p>Building the IPSW is done serverside and might take some time. If multiple people export at the same time, they'll be processed in order. <b>Please be patient with downloads. Don't click that button twice.</b></p>
+<p>Also, you might have to rename the file it downloads. If you download both a 2012 and 2015 version, they'll probably have the same name. I'll get to fixing that.</p>
+<h3>Consider chipping in so i can maybe get a VPS to process stuff quicker @ <a href="https://ko-fi.com/zeehondie">https://ko-fi.com/zeehondie</a></h3>
+<input type="file" id="ipswInput" accept=".ipsw" />
+<div id="status"></div>
+<div class="asset-list" id="assetList"></div>
+<button id="exportButton" style="display:none;">Export Modified Assets</button>
+
+<!-- fflate for ZIP compression -->
+<script src="https://unpkg.com/fflate@0.8.2"></script>
+
+<!-- RgbQuant for smart quantization -->
+
+<script src="
+https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
+"></script>
+
+<!-- Your asset ID list -->
+<script src="./js/important.js"></script>
+
+<script type="module">
+    import { extractFilteredImages } from './js/unpack/unpack.js';
+
+    const input = document.getElementById('ipswInput');
+    const status = document.getElementById('status');
+    const assetList = document.getElementById('assetList');
+
+    // State
+    let modifiedAssets = new Map();
+    let originalImages = {};
+    let canvasRefs = {};
+    let showAllMode = false;
+
+    // UI buttons
+    const toggleViewBtn = document.createElement('button');
+    toggleViewBtn.textContent = 'Show All Assets';
+    toggleViewBtn.style.marginBottom = '20px';
+    toggleViewBtn.onclick = () => {
+        showAllMode = !showAllMode;
+        toggleViewBtn.textContent = showAllMode ? 'Show Only Important' : 'Show All Assets';
+        if (input.files.length > 0) input.dispatchEvent(new Event('change'));
+    };
+    input.before(toggleViewBtn);
+
+    const copyAllBtn = document.createElement('button');
+    copyAllBtn.textContent = 'Copy All From Origin';
+    copyAllBtn.style.display = 'none';
+    copyAllBtn.style.marginBottom = '20px';
+    input.after(copyAllBtn);
+
+    const build2012Btn = document.createElement('button');
+    build2012Btn.textContent = 'Build IPSW (2012)';
+    build2012Btn.style.display = 'none';
+    build2012Btn.style.marginTop = '20px';
+
+    const build2015Btn = document.createElement('button');
+    build2015Btn.textContent = 'Build IPSW (2015)';
+    build2015Btn.style.display = 'none';
+    build2015Btn.style.marginTop = '20px';
+
+    assetList.after(build2012Btn, build2015Btn);
+
+    const spinner = document.createElement('span');
+    spinner.textContent = 'Processing...';
+    spinner.style.display = 'none';
+    build2015Btn.after(spinner);
+
+    // Load and display assets
+    input.addEventListener('change', async (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        status.textContent = 'Reading file...';
+        const buffer = await file.arrayBuffer();
+
+        try {
+            const allImages = await extractFilteredImages(buffer, {});
+            const filtered = allImages.filter(img => {
+                const id = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
+                if (do_not_show.includes(id)) return false;
+                if (showAllMode) return validAssetEndings.some(s => id.endsWith(s));
+                return importantAssets.includes(id);
+            });
+
+            assetList.innerHTML = '';
+            modifiedAssets.clear();
+            canvasRefs = {};
+            originalImages = {};
+            build2012Btn.style.display = 'inline-block';
+            build2015Btn.style.display = 'inline-block';
+            copyAllBtn.style.display = 'inline-block';
+
+            for (const img of filtered) {
+                const assetId = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
+                const wrapper = document.createElement('div');
+                wrapper.className = 'asset-item';
+
+                const original = document.createElement('div');
+                original.className = 'asset-preview';
+                const originalImg = document.createElement('img');
+                originalImg.src = img.dataURL;
+                originalImg.width = img.width;
+                originalImg.height = img.height;
+                const originalInfo = document.createElement('div');
+                originalInfo.className = 'info';
+                originalInfo.textContent = `Original: ${assetId}`;
+                original.appendChild(originalImg);
+                original.appendChild(originalInfo);
+
+                const replacement = document.createElement('div');
+                replacement.className = 'asset-preview';
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#eee';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                const canvasInfo = document.createElement('div');
+                canvasInfo.className = 'info';
+                canvasInfo.textContent = `Replacement: ${img.width}×${img.height}`;
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.accept = 'image/*';
+
+                fileInput.addEventListener('change', async (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    const bmp = await createImageBitmap(file);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+                    const idata = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+                    const isIndexed = assetId.endsWith('_0064');
+                    const isPaletted16 = assetId.endsWith('_0065');
+                    let colorInfo = '';
+
+                    if (isIndexed || isPaletted16) {
+                        const before = countUniqueColors(idata);
+                        const maxColors = isIndexed ? 255 : 65535;
+                        const quantized = quantizeWithRgbQuant(idata, maxColors);
+                        ctx.putImageData(quantized, 0, 0);
+                        const after = countUniqueColors(quantized);
+                        colorInfo = `Colors: ${after} (was ${before})`;
+                    } else {
+                        colorInfo = `Colors: ${countUniqueColors(idata)}`;
+                    }
+
+                    canvasInfo.textContent = `Replacement: ${canvas.width}×${canvas.height} • ${colorInfo}`;
+                    modifiedAssets.set(assetId, canvas);
+                });
+
+                const syncBtn = document.createElement('button');
+                syncBtn.textContent = 'Sync to Group';
+                syncBtn.style.marginTop = '10px';
+                syncBtn.onclick = async () => {
+                    if (!modifiedAssets.has(assetId)) {
+                        alert('Upload first before syncing.');
+                        return;
+                    }
+
+                    const group = getGroupForAssetId(assetId);
+                    if (!group) {
+                        alert('No group found.');
+                        return;
+                    }
+
+                    const sourceCanvas = canvas;
+                    const srcCtx = sourceCanvas.getContext('2d');
+                    const imgData = srcCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+
+                    for (const id of groupMap[group]) {
+                        if (id === assetId || !(id in canvasRefs)) continue;
+                        const { canvas: targetCanvas, ctx: targetCtx } = canvasRefs[id];
+
+                        targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+
+                        // Resize if needed
+                        let resizedData = imgData;
+                        if (
+                            sourceCanvas.width !== targetCanvas.width ||
+                            sourceCanvas.height !== targetCanvas.height
+                        ) {
+                            const tempImg = new Image();
+                            tempImg.src = sourceCanvas.toDataURL();
+                            await tempImg.decode();
+                            targetCtx.imageSmoothingEnabled = false;
+                            targetCtx.drawImage(tempImg, 0, 0, targetCanvas.width, targetCanvas.height);
+                            resizedData = targetCtx.getImageData(0, 0, targetCanvas.width, targetCanvas.height);
+                        }
+
+                        // Apply quantization if needed
+                        const isIndexed = id.endsWith('_0064');
+                        const isPaletted16 = id.endsWith('_0065');
+                        if (isIndexed || isPaletted16) {
+                            const maxColors = isIndexed ? 255 : 65535;
+                            const quantized = quantizeWithRgbQuant(resizedData, maxColors);
+                            targetCtx.putImageData(quantized, 0, 0);
+                        } else {
+                            targetCtx.putImageData(resizedData, 0, 0);
+                        }
+
+                        modifiedAssets.set(id, targetCanvas);
+                    }
+
+                    status.textContent = `Synced ${groupMap[group].length} assets in group (with quantization).`;
+                };
+
+
+                replacement.appendChild(canvas);
+                replacement.appendChild(canvasInfo);
+                replacement.appendChild(fileInput);
+                replacement.appendChild(syncBtn);
+
+                wrapper.appendChild(original);
+                wrapper.appendChild(replacement);
+                assetList.appendChild(wrapper);
+
+                canvasRefs[assetId] = { canvas, ctx };
+                originalImages[assetId] = { image: originalImg };
+            }
+
+            status.textContent = `Showing ${filtered.length} assets.`;
+
+        } catch (err) {
+            console.error(err);
+            status.textContent = `Error: ${err.message}`;
+        }
+    });
+
+    copyAllBtn.addEventListener('click', async () => {
+        for (const assetId in originalImages) {
+            const entry = originalImages[assetId];
+            const image = new Image();
+            image.src = entry.image.src;
+            await image.decode();
+            const ctx = canvasRefs[assetId].ctx;
+            const canvas = canvasRefs[assetId].canvas;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(image, 0, 0);
+            modifiedAssets.set(assetId, canvas);
+        }
+        status.textContent = 'All originals copied.';
+    });
+
+    // Unified build function
+    async function buildIPSW(version) {
+        if (modifiedAssets.size === 0) {
+            alert('No assets modified.');
+            return;
+        }
+
+        spinner.style.display = 'inline';
+        status.textContent = `Uploading and building IPSW (${version})...`;
+
+        const entries = {};
+        for (const [assetId, canvas] of modifiedAssets.entries()) {
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+            const buf = await blob.arrayBuffer();
+            entries[`${assetId}.png`] = new Uint8Array(buf);
+        }
+
+        const zipBlob = new Blob([fflate.zipSync(entries, { level: 9 })], { type: 'application/zip' });
+        const formData = new FormData();
+        formData.append('file', zipBlob, 'modified_assets.zip');
+
+        try {
+            // const uploadRes = await fetch('http://localhost:9693/upload', {
+            const uploadRes = await fetch('https://ipswtunnel.zeehondie.net/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) throw new Error('Upload failed');
+
+            // const buildRes = await fetch(`http://localhost:9693/build-ipsw?version=${version}`);
+            const buildRes = await fetch(`http://ipswtunnel.zeehondie.net/build-ipsw?version=${version}`);
+            if (!buildRes.ok) throw new Error('Build failed');
+
+            const blob = await buildRes.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `iPod_Nano_Custom_${version}.ipsw`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            status.textContent = 'Download ready.';
+        } catch (err) {
+            console.error(err);
+            status.textContent = `Build error: ${err.message}`;
+        } finally {
+            spinner.style.display = 'none';
+        }
+    }
+
+    build2012Btn.onclick = () => buildIPSW('2012');
+    build2015Btn.onclick = () => buildIPSW('2015');
+
+    function countUniqueColors(imageData) {
+        const data = imageData.data;
+        const colors = new Set();
+        for (let i = 0; i < data.length; i += 4) {
+            colors.add(`${data[i]},${data[i + 1]},${data[i + 2]},${data[i + 3]}`);
+        }
+        return colors.size;
+    }
+
+    function quantizeWithRgbQuant(imageData, maxColors) {
+        const q = new RgbQuant({
+            colors: maxColors,
+            method: 2,
+            initColors: 4096,
+            minHueCols: 256,
+            dithKern: null
+        });
+
+        q.sample(imageData);
+        const rgbaArray = q.reduce(imageData, true);
+        const clamped = new Uint8ClampedArray(rgbaArray);
+        return new ImageData(clamped, imageData.width, imageData.height);
+    }
+</script>
+
+
+
+
+
+</body>
+</html>
