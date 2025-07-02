@@ -44,7 +44,7 @@ export const json = {
             "striped": {"full_res": "229442242_0064", "preview": "229442255_0064"},
             "dotted": {"full_res": "229442268_0064", "preview": "229442281_0064"},
             "circles": {"full_res": "229442294_0064", "preview": "229442307_0064"},
-            "neutral": {"full_res": "229442215_0064", "preview": "229442228_0064"}
+            "neutral": {"full_res": "229442215_0064",    "preview": "229442228_0064"}
         },
         "Blue": { // This mapping is correct, and tested on a 2012 blue model.  
             "solid": {"full_res": "229442217_0064", "preview": "229442230_0064"},

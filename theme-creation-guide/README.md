@@ -64,7 +64,8 @@ The standard wallpaper resolution is 240x432 pixels, while the preview wallpaper
 Below is a list of the wallpapers and their respective IDs as used in the assets folder:
 
 (List may contain errors, I am working on refining and completing it in the near future.)
-### Slate
+### Slate*
+*Might not be correct as i have not been able to test this color yet
 
 | Pattern  | Preview ID     | Full-Res ID     |
 |----------|----------------|-----------------|
