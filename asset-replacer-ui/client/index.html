@@ -372,7 +372,7 @@ https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
             if (!uploadRes.ok) throw new Error('Upload failed');
 
             // const buildRes = await fetch(`http://localhost:9693/build-ipsw?version=${version}`);
-            const buildRes = await fetch(`http://ipswtunnel.zeehondie.net/build-ipsw?version=${version}`);
+            const buildRes = await fetch(`https://ipswtunnel.zeehondie.net/build-ipsw?version=${version}`);
             if (!buildRes.ok) throw new Error('Build failed');
 
             const blob = await buildRes.blob();
