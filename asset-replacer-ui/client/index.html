@@ -147,7 +147,6 @@
     let canvasRefs = {};
     let showAllMode = false;
 
-    // UI Buttons
     const toggleViewBtn = document.createElement('button');
     toggleViewBtn.textContent = 'Show All Assets';
     toggleViewBtn.onclick = () => {
@@ -177,7 +176,7 @@
     spinner.style.display = 'none';
     build2015Btn.after(spinner);
 
-    // Load and display assets
+    // Main load logic
     input.addEventListener('change', async (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -202,149 +201,48 @@
             build2015Btn.style.display = 'inline-block';
             copyAllBtn.style.display = 'inline-block';
 
-            const groups = [
-                { title: 'App Icons', keys: importantAssets.appIcons },
-                { title: 'Wallpapers', keys: importantAssets.wallpapers },
-                { title: 'UI Elements', keys: importantAssets.UIelements }
-            ];
-
-            for (const group of groups) {
-                const groupWrapper = document.createElement('div');
-                groupWrapper.className = 'asset-group';
-
-                const groupTitle = document.createElement('div');
-                groupTitle.className = 'asset-group-title';
-                groupTitle.textContent = group.title;
-
-                const groupContent = document.createElement('div');
-                groupContent.className = 'asset-group-content';
+            if (showAllMode) {
+                const allWrapper = document.createElement('div');
+                allWrapper.className = 'asset-group-content';
 
                 for (const img of filtered) {
                     const assetId = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
-                    if (!group.keys.includes(assetId)) continue;
-
-                    const wrapper = document.createElement('div');
-                    wrapper.className = 'asset-item';
-
-                    const original = document.createElement('div');
-                    original.className = 'asset-preview';
-                    const originalImg = document.createElement('img');
-                    originalImg.src = img.dataURL;
-                    originalImg.width = img.width;
-                    originalImg.height = img.height;
-                    const originalInfo = document.createElement('div');
-                    originalInfo.className = 'info';
-                    originalInfo.textContent = `Original: ${assetId}`;
-                    original.appendChild(originalImg);
-                    original.appendChild(originalInfo);
-
-                    const replacement = document.createElement('div');
-                    replacement.className = 'asset-preview';
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.fillStyle = '#eee';
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                    const canvasInfo = document.createElement('div');
-                    canvasInfo.className = 'info';
-                    canvasInfo.textContent = `Replacement: ${img.width}×${img.height}`;
-                    const fileInput = document.createElement('input');
-                    fileInput.type = 'file';
-                    fileInput.accept = 'image/*';
-
-                    fileInput.addEventListener('change', async (e) => {
-                        const file = e.target.files[0];
-                        if (!file) return;
-                        const bmp = await createImageBitmap(file);
-                        ctx.clearRect(0, 0, canvas.width, canvas.height);
-                        ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-                        const idata = ctx.getImageData(0, 0, canvas.width, canvas.height);
-
-                        const isIndexed = assetId.endsWith('_0064');
-                        const isPaletted16 = assetId.endsWith('_0065');
-                        let colorInfo = '';
-
-                        if (isIndexed || isPaletted16) {
-                            const before = countUniqueColors(idata);
-                            const maxColors = isIndexed ? 255 : 65535;
-                            const quantized = quantizeWithRgbQuant(idata, maxColors);
-                            ctx.putImageData(quantized, 0, 0);
-                            const after = countUniqueColors(quantized);
-                            colorInfo = `Colors: ${after} (was ${before})`;
-                        } else {
-                            colorInfo = `Colors: ${countUniqueColors(idata)}`;
-                        }
-
-                        canvasInfo.textContent = `Replacement: ${canvas.width}×${canvas.height} • ${colorInfo}`;
-                        modifiedAssets.set(assetId, canvas);
-                    });
-
-                    const syncBtn = document.createElement('button');
-                    syncBtn.textContent = 'Sync to Group';
-                    syncBtn.onclick = async () => {
-                        if (!modifiedAssets.has(assetId)) {
-                            alert('Upload first before syncing.');
-                            return;
-                        }
-
-                        const groupName = getGroupForAssetId(assetId);
-                        if (!groupName || !groupMap[groupName]) {
-                            alert('No group found.');
-                            return;
-                        }
-
-                        const sourceCanvas = canvas;
-                        const srcCtx = sourceCanvas.getContext('2d');
-                        const imgData = srcCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
-
-                        for (const id of groupMap[groupName]) {
-                            if (id === assetId || !(id in canvasRefs)) continue;
-                            const { canvas: targetCanvas, ctx: targetCtx } = canvasRefs[id];
-
-                            targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
-
-                            const tempImg = new Image();
-                            tempImg.src = sourceCanvas.toDataURL();
-                            await tempImg.decode();
-                            targetCtx.imageSmoothingEnabled = false;
-                            targetCtx.drawImage(tempImg, 0, 0, targetCanvas.width, targetCanvas.height);
-
-                            const resizedData = targetCtx.getImageData(0, 0, targetCanvas.width, targetCanvas.height);
-
-                            const isIndexed = id.endsWith('_0064');
-                            const isPaletted16 = id.endsWith('_0065');
-                            if (isIndexed || isPaletted16) {
-                                const maxColors = isIndexed ? 255 : 65535;
-                                const quantized = quantizeWithRgbQuant(resizedData, maxColors);
-                                targetCtx.putImageData(quantized, 0, 0);
-                            } else {
-                                targetCtx.putImageData(resizedData, 0, 0);
-                            }
-
-                            modifiedAssets.set(id, targetCanvas);
-                        }
-
-                        status.textContent = `Synced ${groupMap[groupName].length} assets.`;
-                    };
-
-                    replacement.appendChild(canvas);
-                    replacement.appendChild(canvasInfo);
-                    replacement.appendChild(fileInput);
-                    replacement.appendChild(syncBtn);
-
-                    wrapper.appendChild(original);
-                    wrapper.appendChild(replacement);
-                    groupContent.appendChild(wrapper);
-
-                    canvasRefs[assetId] = { canvas, ctx };
-                    originalImages[assetId] = { image: originalImg };
+                    const wrapper = createAssetItem(img, assetId);
+                    allWrapper.appendChild(wrapper);
                 }
 
-                groupWrapper.appendChild(groupTitle);
-                groupWrapper.appendChild(groupContent);
-                assetList.appendChild(groupWrapper);
+                assetList.appendChild(allWrapper);
+
+            } else {
+                const groups = [
+                    { title: 'App Icons', keys: importantAssets.appIcons },
+                    { title: 'Wallpapers', keys: importantAssets.wallpapers },
+                    { title: 'UI Elements', keys: importantAssets.UIelements }
+                ];
+
+                for (const group of groups) {
+                    const groupWrapper = document.createElement('div');
+                    groupWrapper.className = 'asset-group';
+
+                    const groupTitle = document.createElement('div');
+                    groupTitle.className = 'asset-group-title';
+                    groupTitle.textContent = group.title;
+
+                    const groupContent = document.createElement('div');
+                    groupContent.className = 'asset-group-content';
+
+                    for (const img of filtered) {
+                        const assetId = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
+                        if (!group.keys.includes(assetId)) continue;
+
+                        const wrapper = createAssetItem(img, assetId);
+                        groupContent.appendChild(wrapper);
+                    }
+
+                    groupWrapper.appendChild(groupTitle);
+                    groupWrapper.appendChild(groupContent);
+                    assetList.appendChild(groupWrapper);
+                }
             }
 
             status.textContent = `Showing ${filtered.length} assets.`;
@@ -354,6 +252,79 @@
             status.textContent = `Error: ${err.message}`;
         }
     });
+
+    // Create one asset card
+    function createAssetItem(img, assetId) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'asset-item';
+
+        const original = document.createElement('div');
+        original.className = 'asset-preview';
+        const originalImg = document.createElement('img');
+        originalImg.src = img.dataURL;
+        originalImg.width = img.width;
+        originalImg.height = img.height;
+        const originalInfo = document.createElement('div');
+        originalInfo.className = 'info';
+        originalInfo.textContent = `Original: ${assetId}`;
+        original.appendChild(originalImg);
+        original.appendChild(originalInfo);
+
+        const replacement = document.createElement('div');
+        replacement.className = 'asset-preview';
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#eee';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const canvasInfo = document.createElement('div');
+        canvasInfo.className = 'info';
+        canvasInfo.textContent = `Replacement: ${img.width}×${img.height}`;
+        const fileInput = document.createElement('input');
+        fileInput.type = 'file';
+        fileInput.accept = 'image/*';
+
+        fileInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const bmp = await createImageBitmap(file);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+            const idata = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+            const isIndexed = assetId.endsWith('_0064');
+            const isPaletted16 = assetId.endsWith('_0065');
+            let colorInfo = '';
+
+            if (isIndexed || isPaletted16) {
+                const before = countUniqueColors(idata);
+                const maxColors = isIndexed ? 255 : 65535;
+                const quantized = quantizeWithRgbQuant(idata, maxColors);
+                ctx.putImageData(quantized, 0, 0);
+                const after = countUniqueColors(quantized);
+                colorInfo = `Colors: ${after} (was ${before})`;
+            } else {
+                colorInfo = `Colors: ${countUniqueColors(idata)}`;
+            }
+
+            canvasInfo.textContent = `Replacement: ${canvas.width}×${canvas.height} • ${colorInfo}`;
+            modifiedAssets.set(assetId, canvas);
+        });
+
+        replacement.appendChild(canvas);
+        replacement.appendChild(canvasInfo);
+        replacement.appendChild(fileInput);
+
+        wrapper.appendChild(original);
+        wrapper.appendChild(replacement);
+
+        canvasRefs[assetId] = { canvas, ctx };
+        originalImages[assetId] = { image: originalImg };
+
+        return wrapper;
+    }
 
     copyAllBtn.addEventListener('click', async () => {
         for (const assetId in originalImages) {
