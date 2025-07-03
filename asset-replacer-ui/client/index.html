@@ -169,7 +169,15 @@
     build2015Btn.textContent = 'Build IPSW (2015)';
     build2015Btn.style.display = 'none';
 
-    assetList.after(build2012Btn, build2015Btn);
+    const downloadPNGsBtn = document.createElement('button');
+    // downloadPNGsBtn.className = 'downloadPNG';
+    downloadPNGsBtn.textContent = 'Download Modified PNGs (ZIP)';
+    downloadPNGsBtn.style.display = 'none';
+    downloadPNGsBtn.style.marginTop = '20px';
+    // build2015Btn.after(downloadPNGsBtn);
+
+
+    assetList.after(build2012Btn, build2015Btn, downloadPNGsBtn);
 
     const spinner = document.createElement('span');
     spinner.textContent = 'Processing...';
@@ -200,6 +208,8 @@
             build2012Btn.style.display = 'inline-block';
             build2015Btn.style.display = 'inline-block';
             copyAllBtn.style.display = 'inline-block';
+            downloadPNGsBtn.style.display = 'inline-block';
+
 
             if (showAllMode) {
                 const allWrapper = document.createElement('div');
@@ -252,6 +262,39 @@
             status.textContent = `Error: ${err.message}`;
         }
     });
+
+
+    downloadPNGsBtn.onclick = async () => {
+        if (modifiedAssets.size === 0) {
+            alert('No modified assets to download.');
+            return;
+        }
+
+        status.textContent = 'Preparing ZIP of modified PNGs...';
+        spinner.style.display = 'inline';
+
+        const entries = {};
+
+        for (const [assetId, canvas] of modifiedAssets.entries()) {
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+            const buf = await blob.arrayBuffer();
+            entries[`${assetId}.png`] = new Uint8Array(buf);
+        }
+
+        const zipData = fflate.zipSync(entries, { level: 9 });
+        const zipBlob = new Blob([zipData], { type: 'application/zip' });
+
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Modified_iPodNano_Assets.zip';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        spinner.style.display = 'none';
+        status.textContent = 'Modified PNGs ZIP ready.';
+    };
+
 
     // Create one asset card
     function createAssetItem(img, assetId) {
