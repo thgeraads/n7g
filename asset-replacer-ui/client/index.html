@@ -10,88 +10,106 @@
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="nano.zeehondie.net">
 
-
     <style>
-    body {
-    font-family: 'Roboto', sans-serif;
-    background: #f2f2f2;
-    color: #333;
-    padding: 2em;
-    line-height: 1.6;
-    }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: #f2f2f2;
+            color: #333;
+            padding: 2em;
+            line-height: 1.6;
+        }
 
-    button {
-    background: #1976d2;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    transition: background 0.2s ease;
-    }
+        button {
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background 0.2s ease;
+        }
 
-    button:hover {
-    background: #1565c0;
-    }
+        button:hover {
+            background: #1565c0;
+        }
 
-    button:disabled {
-    background: #9e9e9e;
-    cursor: not-allowed;
-    }
+        button:disabled {
+            background: #9e9e9e;
+            cursor: not-allowed;
+        }
 
-    .asset-list {
-    display: flex;
-    flex-direction: column;
-    gap: 30px;
-    }
+        .asset-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
 
-    .asset-item {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    align-items: flex-start;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    background: #fff;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    }
+        .asset-group {
+            margin-bottom: 40px;
+        }
 
-    .asset-preview {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    }
+        .asset-group-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
 
-    .asset-preview img,
-    .asset-preview canvas {
-    image-rendering: pixelated;
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    background: #fafafa;
-    }
+        .asset-group-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
 
-    .asset-preview input[type="file"] {
-    margin-top: 10px;
-    }
+        .asset-item {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-start;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            /*max-width: 200px;*/
+            align-items: center;
+        }
 
-    .info {
-    font-size: 13px;
-    margin-top: 8px;
-    color: #555;
-    }
+        .asset-preview {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-    #buildDownloadButton,
-    #exportButton,
-    #copyAllBtn,
-    #toggleViewBtn {
-    margin-top: 20px;
-    display: block;
-    }
-</style>
+        .asset-preview img,
+        .asset-preview canvas {
+            image-rendering: pixelated;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+            background: #fafafa;
+        }
+
+        .asset-preview input[type="file"] {
+            margin-top: 10px;
+        }
+
+        .info {
+            font-size: 13px;
+            margin-top: 8px;
+            color: #555;
+            text-align: center;
+        }
+
+        #buildDownloadButton,
+        #exportButton,
+        #copyAllBtn,
+        #toggleViewBtn {
+            margin-top: 20px;
+            display: block;
+        }
+    </style>
 </head>
 <body>
 
@@ -101,29 +119,22 @@
 
 <h1>Please read this before getting started</h1>
 <p>You can show <b>all</b> assets by clicking the "show all assets" button below. THIS WILL CLEAR ALL YOUR UPLOADED ASSETS. If you intend to change more than is displayed in "simple mode", click that button BEFORE getting started. You've been warned.</p>
-<p>Wallpapers are grouped by type. This means you can upload a replacement and click the "sync to group" button and it'll apply that replacement to all images in the group. (solid, dotted, striped, circles) This is useful for wallpapers, as you can upload one image and apply it to all wallpapers at once. Uploading individual wallpapers per color is supported. <b>Clicking that button WILL overwrite all custom assets you've uploaded to other wallpapers of that group. </b>Clicking that button on any other asset won't do anything.</p>
-<p>When modifying existing custom themes, be sure to press the "copy from origin" button to use the custom theme assets. <b>Not doing this will lead to any unreplaced assets becoming stock assets. This WILL overwrite any assets you've already uploaded</b></p>
+<p>Wallpapers are grouped by type. This means you can upload a replacement and click the "sync to group" button and it'll apply that replacement to all images in the group. (solid, dotted, striped, circles)</p>
+<p>When modifying existing custom themes, be sure to press the "copy from origin" button to use the custom theme assets.</p>
 
-<p>Building the IPSW is done serverside and might take some time. If multiple people export at the same time, they'll be processed in order. <b>Please be patient with downloads. Don't click that button twice.</b></p>
-<p>Also, you might have to rename the file it downloads. If you download both a 2012 and 2015 version, they'll probably have the same name. I'll get to fixing that.</p>
-<h3>Consider chipping in so i can maybe get a VPS to process stuff quicker @ <a href="https://ko-fi.com/zeehondie">https://ko-fi.com/zeehondie</a></h3>
+<h3>Consider chipping in so I can maybe get a VPS to process stuff quicker @ <a href="https://ko-fi.com/zeehondie">https://ko-fi.com/zeehondie</a></h3>
+
 <input type="file" id="ipswInput" accept=".ipsw" />
 <div id="status"></div>
 <div class="asset-list" id="assetList"></div>
 <button id="exportButton" style="display:none;">Export Modified Assets</button>
 
-<!-- fflate for ZIP compression -->
+<!-- Dependencies -->
 <script src="https://unpkg.com/fflate@0.8.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js"></script>
 
-<!-- RgbQuant for smart quantization -->
-
-<script src="
-https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
-"></script>
-
-<!-- Your asset ID list -->
+<!-- Constants & Main Script -->
 <script src="./js/important.js"></script>
-
 <script type="module">
     import { extractFilteredImages } from './js/unpack/unpack.js';
 
@@ -131,16 +142,14 @@ https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
     const status = document.getElementById('status');
     const assetList = document.getElementById('assetList');
 
-    // State
     let modifiedAssets = new Map();
     let originalImages = {};
     let canvasRefs = {};
     let showAllMode = false;
 
-    // UI buttons
+    // UI Buttons
     const toggleViewBtn = document.createElement('button');
     toggleViewBtn.textContent = 'Show All Assets';
-    toggleViewBtn.style.marginBottom = '20px';
     toggleViewBtn.onclick = () => {
         showAllMode = !showAllMode;
         toggleViewBtn.textContent = showAllMode ? 'Show Only Important' : 'Show All Assets';
@@ -151,18 +160,15 @@ https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
     const copyAllBtn = document.createElement('button');
     copyAllBtn.textContent = 'Copy All From Origin';
     copyAllBtn.style.display = 'none';
-    copyAllBtn.style.marginBottom = '20px';
     input.after(copyAllBtn);
 
     const build2012Btn = document.createElement('button');
     build2012Btn.textContent = 'Build IPSW (2012)';
     build2012Btn.style.display = 'none';
-    build2012Btn.style.marginTop = '20px';
 
     const build2015Btn = document.createElement('button');
     build2015Btn.textContent = 'Build IPSW (2015)';
     build2015Btn.style.display = 'none';
-    build2015Btn.style.marginTop = '20px';
 
     assetList.after(build2012Btn, build2015Btn);
 
@@ -185,7 +191,7 @@ https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
                 const id = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
                 if (do_not_show.includes(id)) return false;
                 if (showAllMode) return validAssetEndings.some(s => id.endsWith(s));
-                return importantAssets.includes(id);
+                return Object.values(importantAssets).flat().includes(id);
             });
 
             assetList.innerHTML = '';
@@ -196,134 +202,149 @@ https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
             build2015Btn.style.display = 'inline-block';
             copyAllBtn.style.display = 'inline-block';
 
-            for (const img of filtered) {
-                const assetId = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
-                const wrapper = document.createElement('div');
-                wrapper.className = 'asset-item';
+            const groups = [
+                { title: 'App Icons', keys: importantAssets.appIcons },
+                { title: 'Wallpapers', keys: importantAssets.wallpapers },
+                { title: 'UI Elements', keys: importantAssets.UIelements }
+            ];
 
-                const original = document.createElement('div');
-                original.className = 'asset-preview';
-                const originalImg = document.createElement('img');
-                originalImg.src = img.dataURL;
-                originalImg.width = img.width;
-                originalImg.height = img.height;
-                const originalInfo = document.createElement('div');
-                originalInfo.className = 'info';
-                originalInfo.textContent = `Original: ${assetId}`;
-                original.appendChild(originalImg);
-                original.appendChild(originalInfo);
+            for (const group of groups) {
+                const groupWrapper = document.createElement('div');
+                groupWrapper.className = 'asset-group';
 
-                const replacement = document.createElement('div');
-                replacement.className = 'asset-preview';
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.fillStyle = '#eee';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                const groupTitle = document.createElement('div');
+                groupTitle.className = 'asset-group-title';
+                groupTitle.textContent = group.title;
 
-                const canvasInfo = document.createElement('div');
-                canvasInfo.className = 'info';
-                canvasInfo.textContent = `Replacement: ${img.width}×${img.height}`;
-                const fileInput = document.createElement('input');
-                fileInput.type = 'file';
-                fileInput.accept = 'image/*';
+                const groupContent = document.createElement('div');
+                groupContent.className = 'asset-group-content';
 
-                fileInput.addEventListener('change', async (e) => {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    const bmp = await createImageBitmap(file);
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
-                    const idata = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                for (const img of filtered) {
+                    const assetId = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
+                    if (!group.keys.includes(assetId)) continue;
 
-                    const isIndexed = assetId.endsWith('_0064');
-                    const isPaletted16 = assetId.endsWith('_0065');
-                    let colorInfo = '';
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'asset-item';
 
-                    if (isIndexed || isPaletted16) {
-                        const before = countUniqueColors(idata);
-                        const maxColors = isIndexed ? 255 : 65535;
-                        const quantized = quantizeWithRgbQuant(idata, maxColors);
-                        ctx.putImageData(quantized, 0, 0);
-                        const after = countUniqueColors(quantized);
-                        colorInfo = `Colors: ${after} (was ${before})`;
-                    } else {
-                        colorInfo = `Colors: ${countUniqueColors(idata)}`;
-                    }
+                    const original = document.createElement('div');
+                    original.className = 'asset-preview';
+                    const originalImg = document.createElement('img');
+                    originalImg.src = img.dataURL;
+                    originalImg.width = img.width;
+                    originalImg.height = img.height;
+                    const originalInfo = document.createElement('div');
+                    originalInfo.className = 'info';
+                    originalInfo.textContent = `Original: ${assetId}`;
+                    original.appendChild(originalImg);
+                    original.appendChild(originalInfo);
 
-                    canvasInfo.textContent = `Replacement: ${canvas.width}×${canvas.height} • ${colorInfo}`;
-                    modifiedAssets.set(assetId, canvas);
-                });
+                    const replacement = document.createElement('div');
+                    replacement.className = 'asset-preview';
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#eee';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                const syncBtn = document.createElement('button');
-                syncBtn.textContent = 'Sync to Group';
-                syncBtn.style.marginTop = '10px';
-                syncBtn.onclick = async () => {
-                    if (!modifiedAssets.has(assetId)) {
-                        alert('Upload first before syncing.');
-                        return;
-                    }
+                    const canvasInfo = document.createElement('div');
+                    canvasInfo.className = 'info';
+                    canvasInfo.textContent = `Replacement: ${img.width}×${img.height}`;
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
 
-                    const group = getGroupForAssetId(assetId);
-                    if (!group) {
-                        alert('No group found.');
-                        return;
-                    }
+                    fileInput.addEventListener('change', async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+                        const bmp = await createImageBitmap(file);
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+                        const idata = ctx.getImageData(0, 0, canvas.width, canvas.height);
 
-                    const sourceCanvas = canvas;
-                    const srcCtx = sourceCanvas.getContext('2d');
-                    const imgData = srcCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+                        const isIndexed = assetId.endsWith('_0064');
+                        const isPaletted16 = assetId.endsWith('_0065');
+                        let colorInfo = '';
 
-                    for (const id of groupMap[group]) {
-                        if (id === assetId || !(id in canvasRefs)) continue;
-                        const { canvas: targetCanvas, ctx: targetCtx } = canvasRefs[id];
+                        if (isIndexed || isPaletted16) {
+                            const before = countUniqueColors(idata);
+                            const maxColors = isIndexed ? 255 : 65535;
+                            const quantized = quantizeWithRgbQuant(idata, maxColors);
+                            ctx.putImageData(quantized, 0, 0);
+                            const after = countUniqueColors(quantized);
+                            colorInfo = `Colors: ${after} (was ${before})`;
+                        } else {
+                            colorInfo = `Colors: ${countUniqueColors(idata)}`;
+                        }
 
-                        targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+                        canvasInfo.textContent = `Replacement: ${canvas.width}×${canvas.height} • ${colorInfo}`;
+                        modifiedAssets.set(assetId, canvas);
+                    });
 
-                        // Resize if needed
-                        let resizedData = imgData;
-                        if (
-                            sourceCanvas.width !== targetCanvas.width ||
-                            sourceCanvas.height !== targetCanvas.height
-                        ) {
+                    const syncBtn = document.createElement('button');
+                    syncBtn.textContent = 'Sync to Group';
+                    syncBtn.onclick = async () => {
+                        if (!modifiedAssets.has(assetId)) {
+                            alert('Upload first before syncing.');
+                            return;
+                        }
+
+                        const groupName = getGroupForAssetId(assetId);
+                        if (!groupName || !groupMap[groupName]) {
+                            alert('No group found.');
+                            return;
+                        }
+
+                        const sourceCanvas = canvas;
+                        const srcCtx = sourceCanvas.getContext('2d');
+                        const imgData = srcCtx.getImageData(0, 0, sourceCanvas.width, sourceCanvas.height);
+
+                        for (const id of groupMap[groupName]) {
+                            if (id === assetId || !(id in canvasRefs)) continue;
+                            const { canvas: targetCanvas, ctx: targetCtx } = canvasRefs[id];
+
+                            targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+
                             const tempImg = new Image();
                             tempImg.src = sourceCanvas.toDataURL();
                             await tempImg.decode();
                             targetCtx.imageSmoothingEnabled = false;
                             targetCtx.drawImage(tempImg, 0, 0, targetCanvas.width, targetCanvas.height);
-                            resizedData = targetCtx.getImageData(0, 0, targetCanvas.width, targetCanvas.height);
+
+                            const resizedData = targetCtx.getImageData(0, 0, targetCanvas.width, targetCanvas.height);
+
+                            const isIndexed = id.endsWith('_0064');
+                            const isPaletted16 = id.endsWith('_0065');
+                            if (isIndexed || isPaletted16) {
+                                const maxColors = isIndexed ? 255 : 65535;
+                                const quantized = quantizeWithRgbQuant(resizedData, maxColors);
+                                targetCtx.putImageData(quantized, 0, 0);
+                            } else {
+                                targetCtx.putImageData(resizedData, 0, 0);
+                            }
+
+                            modifiedAssets.set(id, targetCanvas);
                         }
 
-                        // Apply quantization if needed
-                        const isIndexed = id.endsWith('_0064');
-                        const isPaletted16 = id.endsWith('_0065');
-                        if (isIndexed || isPaletted16) {
-                            const maxColors = isIndexed ? 255 : 65535;
-                            const quantized = quantizeWithRgbQuant(resizedData, maxColors);
-                            targetCtx.putImageData(quantized, 0, 0);
-                        } else {
-                            targetCtx.putImageData(resizedData, 0, 0);
-                        }
+                        status.textContent = `Synced ${groupMap[groupName].length} assets.`;
+                    };
 
-                        modifiedAssets.set(id, targetCanvas);
-                    }
+                    replacement.appendChild(canvas);
+                    replacement.appendChild(canvasInfo);
+                    replacement.appendChild(fileInput);
+                    replacement.appendChild(syncBtn);
 
-                    status.textContent = `Synced ${groupMap[group].length} assets in group (with quantization).`;
-                };
+                    wrapper.appendChild(original);
+                    wrapper.appendChild(replacement);
+                    groupContent.appendChild(wrapper);
 
+                    canvasRefs[assetId] = { canvas, ctx };
+                    originalImages[assetId] = { image: originalImg };
+                }
 
-                replacement.appendChild(canvas);
-                replacement.appendChild(canvasInfo);
-                replacement.appendChild(fileInput);
-                replacement.appendChild(syncBtn);
-
-                wrapper.appendChild(original);
-                wrapper.appendChild(replacement);
-                assetList.appendChild(wrapper);
-
-                canvasRefs[assetId] = { canvas, ctx };
-                originalImages[assetId] = { image: originalImg };
+                groupWrapper.appendChild(groupTitle);
+                groupWrapper.appendChild(groupContent);
+                assetList.appendChild(groupWrapper);
             }
 
             status.textContent = `Showing ${filtered.length} assets.`;
@@ -349,60 +370,6 @@ https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
         status.textContent = 'All originals copied.';
     });
 
-    // Unified build function
-    async function buildIPSW(version) {
-        if (modifiedAssets.size === 0) {
-            alert('No assets modified.');
-            return;
-        }
-
-        spinner.style.display = 'inline';
-        status.textContent = `Uploading and building IPSW (${version})...`;
-
-        const entries = {};
-        for (const [assetId, canvas] of modifiedAssets.entries()) {
-            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-            const buf = await blob.arrayBuffer();
-            entries[`${assetId}.png`] = new Uint8Array(buf);
-        }
-
-        const zipBlob = new Blob([fflate.zipSync(entries, { level: 9 })], { type: 'application/zip' });
-        const formData = new FormData();
-        formData.append('file', zipBlob, 'modified_assets.zip');
-
-        try {
-            // const uploadRes = await fetch('http://localhost:9693/upload', {
-            const uploadRes = await fetch('https://ipswtunnel.zeehondie.net/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!uploadRes.ok) throw new Error('Upload failed');
-
-            // const buildRes = await fetch(`http://localhost:9693/build-ipsw?version=${version}`);
-            const buildRes = await fetch(`https://ipswtunnel.zeehondie.net/build-ipsw?version=${version}`);
-            if (!buildRes.ok) throw new Error('Build failed');
-
-            const blob = await buildRes.blob();
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `iPod_Nano_Custom_${version}.ipsw`;
-            a.click();
-            URL.revokeObjectURL(url);
-
-            status.textContent = 'Download ready.';
-        } catch (err) {
-            console.error(err);
-            status.textContent = `Build error: ${err.message}`;
-        } finally {
-            spinner.style.display = 'none';
-        }
-    }
-
-    build2012Btn.onclick = () => buildIPSW('2012');
-    build2015Btn.onclick = () => buildIPSW('2015');
-
     function countUniqueColors(imageData) {
         const data = imageData.data;
         const colors = new Set();
@@ -426,11 +393,59 @@ https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js
         const clamped = new Uint8ClampedArray(rgbaArray);
         return new ImageData(clamped, imageData.width, imageData.height);
     }
+
+    async function buildIPSW(version) {
+        if (modifiedAssets.size === 0) {
+            alert('No assets modified.');
+            return;
+        }
+
+        spinner.style.display = 'inline';
+        status.textContent = `Uploading and building IPSW (${version})...`;
+
+        const entries = {};
+        for (const [assetId, canvas] of modifiedAssets.entries()) {
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+            const buf = await blob.arrayBuffer();
+            entries[`${assetId}.png`] = new Uint8Array(buf);
+        }
+
+        const zipBlob = new Blob([fflate.zipSync(entries, { level: 9 })], { type: 'application/zip' });
+        const formData = new FormData();
+        formData.append('file', zipBlob, 'modified_assets.zip');
+
+        try {
+            const uploadRes = await fetch('https://ipswtunnel.zeehondie.net/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!uploadRes.ok) throw new Error('Upload failed');
+
+            const buildRes = await fetch(`https://ipswtunnel.zeehondie.net/build-ipsw?version=${version}`);
+            if (!buildRes.ok) throw new Error('Build failed');
+
+            const blob = await buildRes.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `iPod_Nano_Custom_${version}.ipsw`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            status.textContent = 'Download ready.';
+        } catch (err) {
+            console.error(err);
+            status.textContent = `Build error: ${err.message}`;
+        } finally {
+            spinner.style.display = 'none';
+        }
+    }
+
+    build2012Btn.onclick = () => buildIPSW('2012');
+    build2015Btn.onclick = () => buildIPSW('2015');
+
 </script>
-
-
-
-
 
 </body>
 </html>
