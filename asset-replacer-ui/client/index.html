@@ -5,7 +5,7 @@
     <title>iPod Nano 7 Theme builder (beta?)</title>
 
     <meta property="og:title" content="iPod Nano 7 Asset Replacer">
-    <meta property="og:description" content="Replace iPod Nano 7 app icons & wallappers in a simple webUI">
+    <meta property="og:description" content="Replace iPod Nano 7 app icons & wallpapers in a simple webUI">
     <meta property="og:url" content="https://thgeraads.github.io/n7g/asset-replacer-ui/">
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="nano.zeehondie.net">
@@ -73,7 +73,6 @@
             border: 1px solid #ddd;
             background: #fff;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            /*max-width: 200px;*/
             align-items: center;
         }
 
@@ -119,10 +118,12 @@
 
 <h1>Please read this before getting started</h1>
 <p>You can show <b>all</b> assets by clicking the "show all assets" button below. THIS WILL CLEAR ALL YOUR UPLOADED ASSETS. If you intend to change more than is displayed in "simple mode", click that button BEFORE getting started. You've been warned.</p>
-<p>Wallpapers are grouped by type. This means you can upload a replacement and click the "sync to group" button and it'll apply that replacement to all images in the group. (solid, dotted, striped, circles)</p>
-<p>When modifying existing custom themes, be sure to press the "copy from origin" button to use the custom theme assets.</p>
+<p>Wallpapers are grouped by type. This means you can upload a replacement and click the "sync to group" button and it'll apply that replacement to all images in the group. (solid, dotted, striped, circles) This is useful for wallpapers, as you can upload one image and apply it to all wallpapers at once. Uploading individual wallpapers per color is supported. <b>Clicking that button WILL overwrite all custom assets you've uploaded to other wallpapers of that group. </b>Clicking that button on any other asset won't do anything.</p>
+<p>When modifying existing custom themes, be sure to press the "copy from origin" button to use the custom theme assets. <b>Not doing this will lead to any unreplaced assets becoming stock assets. This WILL overwrite any assets you've already uploaded</b></p>
 
-<h3>Consider chipping in so I can maybe get a VPS to process stuff quicker @ <a href="https://ko-fi.com/zeehondie">https://ko-fi.com/zeehondie</a></h3>
+<p>Building the IPSW is done serverside and might take some time. If multiple people export at the same time, they'll be processed in order. <b>Please be patient with downloads. Don't click that button twice.</b></p>
+<p>Also, you might have to rename the file it downloads. If you download both a 2012 and 2015 version, they'll probably have the same name. I'll get to fixing that.</p>
+<h3>Consider chipping in so i can maybe get a VPS to process stuff quicker @ <a href="https://ko-fi.com/zeehondie">https://ko-fi.com/zeehondie</a></h3>
 
 <input type="file" id="ipswInput" accept=".ipsw" />
 <div id="status"></div>
@@ -170,12 +171,9 @@
     build2015Btn.style.display = 'none';
 
     const downloadPNGsBtn = document.createElement('button');
-    // downloadPNGsBtn.className = 'downloadPNG';
     downloadPNGsBtn.textContent = 'Download Modified PNGs (ZIP)';
     downloadPNGsBtn.style.display = 'none';
     downloadPNGsBtn.style.marginTop = '20px';
-    // build2015Btn.after(downloadPNGsBtn);
-
 
     assetList.after(build2012Btn, build2015Btn, downloadPNGsBtn);
 
@@ -184,7 +182,7 @@
     spinner.style.display = 'none';
     build2015Btn.after(spinner);
 
-    // Main load logic
+    // Load assets
     input.addEventListener('change', async (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -210,19 +208,14 @@
             copyAllBtn.style.display = 'inline-block';
             downloadPNGsBtn.style.display = 'inline-block';
 
-
             if (showAllMode) {
                 const allWrapper = document.createElement('div');
                 allWrapper.className = 'asset-group-content';
-
                 for (const img of filtered) {
                     const assetId = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
-                    const wrapper = createAssetItem(img, assetId);
-                    allWrapper.appendChild(wrapper);
+                    allWrapper.appendChild(createAssetItem(img, assetId));
                 }
-
                 assetList.appendChild(allWrapper);
-
             } else {
                 const groups = [
                     { title: 'App Icons', keys: importantAssets.appIcons },
@@ -244,9 +237,7 @@
                     for (const img of filtered) {
                         const assetId = `${img.id}_${img.format.toString(16).padStart(4, '0')}`;
                         if (!group.keys.includes(assetId)) continue;
-
-                        const wrapper = createAssetItem(img, assetId);
-                        groupContent.appendChild(wrapper);
+                        groupContent.appendChild(createAssetItem(img, assetId));
                     }
 
                     groupWrapper.appendChild(groupTitle);
@@ -263,40 +254,7 @@
         }
     });
 
-
-    downloadPNGsBtn.onclick = async () => {
-        if (modifiedAssets.size === 0) {
-            alert('No modified assets to download.');
-            return;
-        }
-
-        status.textContent = 'Preparing ZIP of modified PNGs...';
-        spinner.style.display = 'inline';
-
-        const entries = {};
-
-        for (const [assetId, canvas] of modifiedAssets.entries()) {
-            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
-            const buf = await blob.arrayBuffer();
-            entries[`${assetId}.png`] = new Uint8Array(buf);
-        }
-
-        const zipData = fflate.zipSync(entries, { level: 9 });
-        const zipBlob = new Blob([zipData], { type: 'application/zip' });
-
-        const url = URL.createObjectURL(zipBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'Modified_iPodNano_Assets.zip';
-        a.click();
-        URL.revokeObjectURL(url);
-
-        spinner.style.display = 'none';
-        status.textContent = 'Modified PNGs ZIP ready.';
-    };
-
-
-    // Create one asset card
+    // Create asset card
     function createAssetItem(img, assetId) {
         const wrapper = document.createElement('div');
         wrapper.className = 'asset-item';
@@ -307,11 +265,11 @@
         originalImg.src = img.dataURL;
         originalImg.width = img.width;
         originalImg.height = img.height;
-        const originalInfo = document.createElement('div');
-        originalInfo.className = 'info';
-        originalInfo.textContent = `Original: ${assetId}`;
         original.appendChild(originalImg);
-        original.appendChild(originalInfo);
+        original.appendChild(Object.assign(document.createElement('div'), {
+            className: 'info',
+            textContent: `Original: ${assetId}`
+        }));
 
         const replacement = document.createElement('div');
         replacement.className = 'asset-preview';
@@ -325,10 +283,10 @@
         const canvasInfo = document.createElement('div');
         canvasInfo.className = 'info';
         canvasInfo.textContent = `Replacement: ${img.width}×${img.height}`;
+
         const fileInput = document.createElement('input');
         fileInput.type = 'file';
         fileInput.accept = 'image/*';
-
         fileInput.addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
@@ -356,33 +314,106 @@
             modifiedAssets.set(assetId, canvas);
         });
 
-        replacement.appendChild(canvas);
-        replacement.appendChild(canvasInfo);
-        replacement.appendChild(fileInput);
+        // Sync-to-Group Button
+        const syncBtn = document.createElement('button');
+        syncBtn.textContent = 'Sync to Group';
+        syncBtn.style.marginTop = '10px';
+        syncBtn.onclick = async () => {
+            if (!modifiedAssets.has(assetId)) {
+                alert('Upload an image first before syncing.');
+                return;
+            }
 
-        wrapper.appendChild(original);
-        wrapper.appendChild(replacement);
+            const group = getGroupForAssetId(assetId);
+            if (!group || !groupMap[group]) {
+                alert('No valid group found for this asset.');
+                return;
+            }
+
+            const srcCtx = canvas.getContext('2d');
+            const imgData = srcCtx.getImageData(0, 0, canvas.width, canvas.height);
+
+            for (const id of groupMap[group]) {
+                if (id === assetId || !(id in canvasRefs)) continue;
+                const { canvas: targetCanvas, ctx: targetCtx } = canvasRefs[id];
+                targetCtx.clearRect(0, 0, targetCanvas.width, targetCanvas.height);
+
+                let resizedData = imgData;
+                if (canvas.width !== targetCanvas.width || canvas.height !== targetCanvas.height) {
+                    const tempImg = new Image();
+                    tempImg.src = canvas.toDataURL();
+                    await tempImg.decode();
+                    targetCtx.imageSmoothingEnabled = false;
+                    targetCtx.drawImage(tempImg, 0, 0, targetCanvas.width, targetCanvas.height);
+                    resizedData = targetCtx.getImageData(0, 0, targetCanvas.width, targetCanvas.height);
+                }
+
+                const isIndexed = id.endsWith('_0064');
+                const isPaletted16 = id.endsWith('_0065');
+                if (isIndexed || isPaletted16) {
+                    const maxColors = isIndexed ? 255 : 65535;
+                    const quantized = quantizeWithRgbQuant(resizedData, maxColors);
+                    targetCtx.putImageData(quantized, 0, 0);
+                } else {
+                    targetCtx.putImageData(resizedData, 0, 0);
+                }
+
+                modifiedAssets.set(id, targetCanvas);
+            }
+
+            status.textContent = `Synced ${groupMap[group].length} assets in group.`;
+        };
+
+        replacement.append(canvas, canvasInfo, fileInput, syncBtn);
+        wrapper.append(original, replacement);
 
         canvasRefs[assetId] = { canvas, ctx };
         originalImages[assetId] = { image: originalImg };
-
         return wrapper;
     }
 
     copyAllBtn.addEventListener('click', async () => {
         for (const assetId in originalImages) {
-            const entry = originalImages[assetId];
             const image = new Image();
-            image.src = entry.image.src;
+            image.src = originalImages[assetId].image.src;
             await image.decode();
-            const ctx = canvasRefs[assetId].ctx;
-            const canvas = canvasRefs[assetId].canvas;
+            const { canvas, ctx } = canvasRefs[assetId];
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.drawImage(image, 0, 0);
             modifiedAssets.set(assetId, canvas);
         }
         status.textContent = 'All originals copied.';
     });
+
+    downloadPNGsBtn.onclick = async () => {
+        if (modifiedAssets.size === 0) {
+            alert('No modified assets to download.');
+            return;
+        }
+
+        status.textContent = 'Preparing ZIP of modified PNGs...';
+        spinner.style.display = 'inline';
+
+        const entries = {};
+        for (const [assetId, canvas] of modifiedAssets.entries()) {
+            const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+            const buf = await blob.arrayBuffer();
+            entries[`${assetId}.png`] = new Uint8Array(buf);
+        }
+
+        const zipData = fflate.zipSync(entries, { level: 9 });
+        const zipBlob = new Blob([zipData], { type: 'application/zip' });
+
+        const url = URL.createObjectURL(zipBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Modified_iPodNano_Assets.zip';
+        a.click();
+        URL.revokeObjectURL(url);
+
+        spinner.style.display = 'none';
+        status.textContent = 'Modified PNGs ZIP ready.';
+    };
 
     function countUniqueColors(imageData) {
         const data = imageData.data;
@@ -404,8 +435,7 @@
 
         q.sample(imageData);
         const rgbaArray = q.reduce(imageData, true);
-        const clamped = new Uint8ClampedArray(rgbaArray);
-        return new ImageData(clamped, imageData.width, imageData.height);
+        return new ImageData(new Uint8ClampedArray(rgbaArray), imageData.width, imageData.height);
     }
 
     async function buildIPSW(version) {
