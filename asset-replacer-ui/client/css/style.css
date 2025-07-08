@@ -1,0 +1,140 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background: #f2f2f2;
+    color: #333;
+    padding: 2em;
+    line-height: 1.6;
+}
+
+button {
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.2s ease;
+}
+
+button:hover {
+    background: #1565c0;
+}
+
+button:disabled {
+    background: #9e9e9e;
+    cursor: not-allowed;
+}
+
+.asset-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.asset-group {
+    margin-bottom: 40px;
+}
+
+.asset-group-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.asset-group-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.asset-item {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    align-items: center;
+}
+
+.asset-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.asset-preview img,
+.asset-preview canvas {
+    image-rendering: pixelated;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
+.asset-preview input[type="file"] {
+    margin-top: 10px;
+}
+
+.info {
+    font-size: 13px;
+    margin-top: 8px;
+    color: #555;
+    text-align: center;
+}
+
+#buildDownloadButton,
+#exportButton,
+#copyAllBtn,
+#toggleViewBtn {
+    /*margin-top: 20px;*/
+    display: block;
+}
+
+.buttonGroup{
+    display:flex;
+    /*gap:10px;*/
+    /*justify-content: space-between;*/
+    /*border: 2px solid #1976d2;*/
+    border-radius: 16px;
+
+    &>a{
+        color: black;
+        text-decoration: none;
+        padding: 6px 10px;
+        background: #ffffff;
+    }
+
+    &>a:first-child{
+        border-top-left-radius: 13px;
+        border-bottom-left-radius: 13px;
+    }
+
+    &>a:last-child{
+        border-top-right-radius: 13px;
+        border-bottom-right-radius: 13px;
+    }
+
+
+    &>a:last-child.active{
+        color:white;
+        background-color: #1976d2;
+        border-top-right-radius: 13px;
+        border-bottom-right-radius: 13px;
+    }
+
+    &>a:first-child.active{
+        color:white;
+        background-color: #1976d2;
+        border-top-left-radius: 13px;
+        border-bottom-left-radius: 13px;
+    }
+
+
+
+}
