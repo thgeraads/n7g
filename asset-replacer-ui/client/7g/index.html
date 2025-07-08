@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iPod Nano 7 Theme builder (beta?)</title>
+
+    <meta property="og:title" content="iPod Nano 7 Asset Replacer">
+    <meta property="og:description" content="Replace iPod Nano 7 app icons & wallpapers in a simple webUI">
+    <meta property="og:url" content="https://thgeraads.github.io/n7g/asset-replacer-ui/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="nano.zeehondie.net">
+    <link rel="stylesheet" href="../css/style.css">
+
+    <script>
+        localStorage.setItem('device', '7g');
+    </script>
+
+</head>
+<body>
+
+<div class="buttonGroup">
+    <a href="../6g/index.html">Nano 6</a>
+    <a class="active" href="../7g/index.html">Nano 7</a>
+</div>
+
+
+<h1>iPod Nano 7 Theme builder (beta?)</h1>
+
+<p>Select an <code>.ipsw</code> file. This will display each image and let you upload a replacement. Build & download IPSW at the bottom of the page.</p>
+
+<h1>Please read this before getting started</h1>
+<p>You can show <b>all</b> assets by clicking the "show all assets" button below. THIS WILL CLEAR ALL YOUR UPLOADED ASSETS. If you intend to change more than is displayed in "simple mode", click that button BEFORE getting started. You've been warned.</p>
+<p>Wallpapers are grouped by type. This means you can upload a replacement and click the "sync to group" button and it'll apply that replacement to all images in the group. (solid, dotted, striped, circles) This is useful for wallpapers, as you can upload one image and apply it to all wallpapers at once. Uploading individual wallpapers per color is supported. <b>Clicking that button WILL overwrite all custom assets you've uploaded to other wallpapers of that group. </b>Clicking that button on any other asset won't do anything.</p>
+<p>When modifying existing custom themes, be sure to press the "copy from origin" button to use the custom theme assets. <b>Not doing this will lead to any unreplaced assets becoming stock assets. This WILL overwrite any assets you've already uploaded</b></p>
+
+<p>Building the IPSW is done serverside and might take some time. If multiple people export at the same time, they'll be processed in order. <b>Please be patient with downloads. Don't click that button twice.</b></p>
+<p>Also, you might have to rename the file it downloads. If you download both a 2012 and 2015 version, they'll probably have the same name. I'll get to fixing that.</p>
+<h3>Consider chipping in so i can maybe get a VPS to process stuff quicker @ <a href="https://ko-fi.com/zeehondie">https://ko-fi.com/zeehondie</a></h3>
+
+<input type="file" id="ipswInput" accept=".ipsw" />
+<div id="status"></div>
+<div class="asset-list" id="assetList"></div>
+<button id="exportButton" style="display:none;">Export Modified Assets</button>
+
+<!-- Dependencies -->
+<script src="https://unpkg.com/fflate@0.8.2"></script>
+<script src="https://cdn.jsdelivr.net/npm/rgbquant@1.1.2/src/rgbquant.min.js"></script>
+
+<!-- Constants & Main Script -->
+<script src="./important.js"></script>
+
+<script type="module" src="../js/index.js">
+</script>
+
+</body>
+</html>

@@ -20,7 +20,7 @@ const WORK_UNZIP = path.join(WORK_DIR, 'unzipped');
 
 const IPOD_THEME_PATH = path.join(__dirname, 'ipod_theme');
 const BODY_PATH = path.join(IPOD_THEME_PATH, 'body');
-const OUTPUT_ZIP = path.join(IPOD_THEME_PATH, 'iPod_1.1.2_39A10023_2012_repack.ipsw');
+const HARD_REPLACE_PATH = path.join(IPOD_THEME_PATH, 'hard_replace');
 
 // Make sure required directories exist
 fs.mkdirSync(UPLOAD_DIR, {recursive: true});
@@ -39,48 +39,86 @@ app.post('/upload', upload.single('file'), (req, res) => {
     res.json({status: 'ok', filename: req.file.originalname});
 });
 
-// Endpoint to build the IPSW from uploaded assets
-app.get('/build-ipsw', async (req, res) => {
+// Build IPSW endpoint for 2012
+app.get('/build-ipsw/2012', async (req, res) => {
+    await handleBuildRequest('2012', path.join(IPOD_THEME_PATH, 'body_7g_unmodified'), true, res);
+});
+
+// Build IPSW endpoint for 2015
+app.get('/build-ipsw/2015', async (req, res) => {
+    await handleBuildRequest('2015', path.join(IPOD_THEME_PATH, 'body_7g_unmodified'), true, res);
+});
+
+// Build IPSW endpoint for 6g
+app.get('/build-ipsw/6g', async (req, res) => {
+    await handleBuildRequest('6g', path.join(IPOD_THEME_PATH, 'body_6g_unmodified'), false, res);
+});
+
+// Core build handler
+async function handleBuildRequest(version, unmodifiedPath, useHardReplace, res) {
     try {
-        const version = req.query.version === '2015' ? '2015' : '2012'; // fallback to 2012
-
         const uploadedZip = path.join(UPLOAD_DIR, 'modified_assets.zip');
-        const BODY_UNMODIFIED_PATH = path.join(IPOD_THEME_PATH, 'body_unmodified');
-        const HARD_REPLACE_PATH = path.join(IPOD_THEME_PATH, 'hard_replace');
-        const OUTPUT_ZIP = path.join(IPOD_THEME_PATH, `iPod_1.1.2_39A10023_${version}_repack.ipsw`);
 
-        // Clean unzip dir
-        fs.rmSync(WORK_UNZIP, { recursive: true, force: true });
-        fs.mkdirSync(WORK_UNZIP, { recursive: true });
+        let outputZip;
 
-        console.log('Unzipping uploaded assets...');
-        await fs.createReadStream(uploadedZip)
-            .pipe(unzipper.Extract({ path: WORK_UNZIP }))
-            .promise();
+        if (version === '2012' || version === '2015') {
+            outputZip = path.join(IPOD_THEME_PATH, `iPod_1.1.2_39A10023_${version}_repack.ipsw`);
+        }
+        if (version === '6g') {
+            outputZip = path.join(IPOD_THEME_PATH, `iPod_1.2_36B10147_repack.ipsw`);
+        }
 
-        // Reset body directory
-        console.log('Resetting theme body...');
-        fs.rmSync(BODY_PATH, { recursive: true, force: true });
-        fs.mkdirSync(BODY_PATH, { recursive: true });
+        await buildIPSW(version, uploadedZip, unmodifiedPath, outputZip, useHardReplace);
 
-        console.log('Copying body_unmodified...');
-        fs.readdirSync(BODY_UNMODIFIED_PATH).forEach(file => {
+        if (!fs.existsSync(outputZip)) {
+            return res.status(500).send('IPSW build failed: output file not found');
+        }
+
+        console.log(`Sending built IPSW (${version})...`);
+        res.setHeader('Content-Disposition', `attachment; filename="iPod_Nano_Custom_${version}.ipsw.zip"`);
+        res.setHeader('Content-Type', 'application/zip');
+        fs.createReadStream(outputZip).pipe(res);
+    } catch (err) {
+        console.error('Build failed:', err);
+        res.status(500).send('Error during build: ' + err.message);
+    }
+}
+
+// Function to handle build process
+async function buildIPSW(version, uploadedZip, unmodifiedPath, outputZip, useHardReplace = true) {
+    // Clean unzip dir
+    fs.rmSync(WORK_UNZIP, {recursive: true, force: true});
+    fs.mkdirSync(WORK_UNZIP, {recursive: true});
+
+    console.log('Unzipping uploaded assets...');
+    await fs.createReadStream(uploadedZip)
+        .pipe(unzipper.Extract({path: WORK_UNZIP}))
+        .promise();
+
+    // Reset body directory
+    console.log('Resetting theme body...');
+    fs.rmSync(BODY_PATH, {recursive: true, force: true});
+    fs.mkdirSync(BODY_PATH, {recursive: true});
+
+    console.log(`Copying from ${unmodifiedPath}...`);
+    fs.readdirSync(unmodifiedPath).forEach(file => {
+        fs.copyFileSync(
+            path.join(unmodifiedPath, file),
+            path.join(BODY_PATH, file)
+        );
+    });
+
+    console.log('Copying uploaded PNGs...');
+    fs.readdirSync(WORK_UNZIP).forEach(file => {
+        if (file.endsWith('.png')) {
             fs.copyFileSync(
-                path.join(BODY_UNMODIFIED_PATH, file),
+                path.join(WORK_UNZIP, file),
                 path.join(BODY_PATH, file)
             );
-        });
+        }
+    });
 
-        console.log('Copying uploaded PNGs...');
-        fs.readdirSync(WORK_UNZIP).forEach(file => {
-            if (file.endsWith('.png')) {
-                fs.copyFileSync(
-                    path.join(WORK_UNZIP, file),
-                    path.join(BODY_PATH, file)
-                );
-            }
-        });
-
+    if (useHardReplace) {
         console.log('Applying hard_replace files...');
         fs.readdirSync(HARD_REPLACE_PATH).forEach(file => {
             fs.copyFileSync(
@@ -88,31 +126,22 @@ app.get('/build-ipsw', async (req, res) => {
                 path.join(BODY_PATH, file)
             );
         });
-
-        // Build scripts
-        console.log('Running 03_art_pack.py...');
-        await execPromise('python3 03_art_pack.py', { cwd: IPOD_THEME_PATH });
-
-        console.log('Running 06_firmware_pack_7g...');
-        await execPromise('bash 06_firmware_pack_7g', { cwd: IPOD_THEME_PATH });
-
-        // Validate build
-        if (!fs.existsSync(OUTPUT_ZIP)) {
-            return res.status(500).send('IPSW build failed: output file not found');
-        }
-
-        // Send ZIP
-        console.log(`Sending built IPSW (${version})...`);
-        res.setHeader('Content-Disposition', `attachment; filename="iPod_Nano_Custom_${version}.ipsw.zip"`);
-        res.setHeader('Content-Type', 'application/zip');
-        fs.createReadStream(OUTPUT_ZIP).pipe(res);
-
-    } catch (err) {
-        console.error('Build failed:', err);
-        res.status(500).send('Error during build: ' + err.message);
+    } else {
+        console.log('Skipping hard_replace for this version.');
     }
-});
 
+    console.log('Running 03_art_pack.py...');
+    await execPromise('python3 03_art_pack.py', {cwd: IPOD_THEME_PATH});
+
+    if (version === '6g') {
+        console.log('Running 06_firmware_pack_6g...');
+        await execPromise('bash 06_firmware_pack_6g', {cwd: IPOD_THEME_PATH});
+    }
+    else if (version === '2012' || version === '2015') {
+        console.log('Running 06_firmware_pack_7g...');
+        await execPromise('bash 06_firmware_pack_7g', {cwd: IPOD_THEME_PATH});
+    }
+}
 
 // Wrap child_process.exec in a promise
 function execPromise(command, options = {}) {
